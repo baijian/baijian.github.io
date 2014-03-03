@@ -1,19 +1,27 @@
 #!/bin/sh
 
 rm -fr _deploy/
+rm -fr _site/
+jekyll build
 
 git clone -b master . _deploy/ --single-branch
 
-cp -r _site _deploy
+cp -r _site/* _deploy/
 
-#cd _deploy
-#
-#git add .
-#
-#git add -u
-#
-#git commit -m "init"
-#
-#git push origin master --force
+cd _deploy
 
-#rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
+git add .
+
+git add -u
+
+now=$(date +"%Y-%m-%d %H:%M:%S")
+
+git commit -m "Site update at $now"
+
+git push origin master --force
+
+cd ..
+
+git push origin master --force
+
+rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
