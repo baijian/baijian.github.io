@@ -4,7 +4,7 @@ rm -fr _deploy/
 
 git clone -b master . _deploy/ --single-branch
 
-cp -r _site _deploy
+cp -r _site/* _deploy/
 
 cd _deploy
 
@@ -12,8 +12,14 @@ git add .
 
 git add -u
 
-git commit -m "init"
+now=$(date +"%Y-%m-%d %H:%M:%S")
+
+git commit -m "Site update at $now"
 
 git push origin master --force
 
-#rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
+cd ..
+
+git push origin master --force
+
+rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
