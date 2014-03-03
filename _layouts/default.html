@@ -23,6 +23,7 @@
 
           {{ content }}
 
+          {% if page.comments != true %}
           <div class="footer">
             <div class="contact">
               <p>
@@ -53,6 +54,7 @@
             </div>
           </div>
         </div>
+        {% endif %}
 
     </body>
 </html>
