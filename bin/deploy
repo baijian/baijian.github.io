@@ -1,6 +1,8 @@
 #!/bin/sh
 
 rm -fr _deploy/
+rm -fr _site/
+jekyll build
 
 git clone -b master . _deploy/ --single-branch
 
