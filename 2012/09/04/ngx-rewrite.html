@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>ngx-rewrite</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>ngx-rewrite</h2>
+<p class="meta">04 Sep 2012</p>
+
+<div class="post">
+<p>建议直接看官方文档^-^:<a href="http://nginx.org/en/docs/http/ngx_http_rewrite_module.html">ngx_http_rewrite_module</a></p>
+
+<p>nginx的rewrite模块包括:break,if,return,rewrite,rewrite_log,set,uninitialized_variable_warn这个几个指令.
+nginx的rewrite模块使得你可以通过正则表达式匹配、return redirect、条件选择配置来改变URIs.</p>
+
+<h3>指令处理的顺序:</h3>
+
+<p>从写在server block的指令开始处理(大部分指令都是从server block开始写)</p>
+
+<p>搜索将要跳转的location</p>
+
+<p>选择一个location进行处理,如果改变uri,一个新的location将会被搜索,如果循环超过10次,将会自动报500错误</p>
+
+<!-- more -->
+
+<h3>return指令(server,location,if)</h3>
+
+<p>return code [text] | URL</p>
+
+<p>return URL</p>
+
+<p>停止继续处理并返回一个code给client.</p>
+
+<h3>rewrite指令(server,location,if)</h3>
+
+<p>rewrite regex replacement [flag]-&gt;[last|break|redirect|permanent]</p>
+
+<p>如果URI符合了regex正则匹配,URI将会被改变为replacement string,因为rewrite指令会按照配置文件里面的出现顺序的执行下去,
+flag能够终止指令的进一步处理.</p>
+
+<p>如果replacement是以&quot;http://&quot;&quot;https://&quot;开头的,一个redirect(302)请求会发往客户端.</p>
+
+<p>last : 找到一个新的location matching the changed URI后就终止rewrite模块的处理</p>
+
+<p>break : 停止处理rewrite模块的当前设置</p>
+
+<p>redirect : 返回一个临时的跳转(http code 302),这个是当replacement string不是以&quot;http://&quot;&quot;https://&quot;开头时用的</p>
+
+<p>permanent : 返回一个永久跳转(http code 301)</p>
+
+<h3>break指令(server,location,if)</h3>
+
+<p>stops processing the current set of ngx_http_rewrite_module directives.
+停止处理当前rewrite模块指令的设置</p>
+
+<h3>if指令(server,location)</h3>
+
+<p>if(condition){
+    ....
+}</p>
+
+<p>condition:
+<code>
+variable name false: empty string, any string start with &quot;0&quot;
+use = !=
+match a variable with a string using &quot;~&quot; &quot;~*&quot;(忽略大小写)
+check if a file exist with &quot;-f&quot; &quot;!-f&quot;
+check directory &quot;-d&quot; &quot;!-d&quot;
+&quot;-e&quot; &quot;!-e&quot; check a file,directory,or a symbolic
+&quot;-x&quot; &quot;!-x&quot; check for executable file
+</code></p>
+
+<h3>The end</h3>
+
+<p>At last I will give a config of rewrite all requests to php entry file which is alwasys used 
+in php project.</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">server {
+    listen 80;
+    server_name localhost;
+    root /path/to/your/project;
+    location / {
+        rewrite ^/(.*)$ /index.php/$1 last;
+    }
+    location ~ \.php {
+        fastcgi_pass    127.0.0.1:9000;
+        fastcgi_split_path_info  ^(.+\.php)(.*)$;
+        fastcgi_param PATH_INFO     $fastcgi_path_info;
+        fastcgi_param PATH_TRANSLATED $document_root$fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+</code></pre></div>
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+</html>

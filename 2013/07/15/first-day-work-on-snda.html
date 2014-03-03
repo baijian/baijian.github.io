@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>First-day-work-on-SNDA</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>First-day-work-on-SNDA</h2>
+<p class="meta">15 Jul 2013</p>
+
+<div class="post">
+<p>Today is the first day to work in SNDA, and ofcourse the first thing is to reinstall linux 
+system instead of windows which is always egg ache.</p>
+
+<p>Ok, begin my reinstall process, I insert my Ubuntu LiveCD, and reboot then enter BIOS, modify 
+boot order, then save and boot.</p>
+
+<!-- more -->
+
+<p>After a while, I will get a install view, but I just got a black screen. I have realized that it must
+be a graphics problem, then I go to ubuntu for help,Then I find the solution:</p>
+
+<p>When startup just press e, then you will be able to edit your boot options, then change 
+<code>quiet splash</code> to <code>nomodeset</code> , then you can install your ubuntu as normal.</p>
+
+<p>Ok, after a while, my installation is done, another problem is appear, my screen has a lower resolution 
+than normal, I feel egg ache, Then I view what graphics card my computer have, It is nvidia, Then I guess
+it must be no nvidia driver, then I input <code>apt-cache search nvidia</code> , then it list a lot of softwares about nvidia,
+then I input <code>sudo apt-get install nvidia-current nvidia-settings</code> , then reboot system, It now show normally.</p>
+
+<p>After I have installed my linux system, then I should prepare my linux environment as I do it again and again before, 
+So I create <a href="https://github.com/baijian/config-files">Personal-Linux-Configs</a> repository to help me.</p>
+
+<p>Some small points to remember:</p>
+
+<ol>
+<li><p>ssh connect slow:</p>
+
+<p>change <code>/etc/ssh_config</code> to add <code>GSSAPIAuthentication no</code></p></li>
+<li><p>run my tunnel.sh shell every 3 miniutes</p>
+
+<p>```*/3 * * * * /bin/bash /path/to/shell/script</p></li>
+<li><p>open ubuntu update center settings and close update prompt, just update system manually input</p>
+
+<p><code>sudo apt-get update</code>
+<code>sudo apt-get upgrade</code></p></li>
+</ol>
+
+<p>With every thing aboove is done, then I install some application softwares and then begin my work on SNDA,
+Hope a great begin.</p>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+</html>
