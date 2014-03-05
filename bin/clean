@@ -1,4 +1,0 @@
-#!/bin/sh
-
-rm -fr _deploy
-rm -fr _site
