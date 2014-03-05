@@ -6,6 +6,12 @@ jekyll build
 
 git clone -b master . _deploy/ --single-branch
 
+cd _deploy
+
+rm -fr ./*
+
+cd ..
+
 cp -r _site/* _deploy/
 
 cd _deploy
