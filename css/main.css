@@ -20,7 +20,9 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-size: 100%; }
+    padding-top: 0.8em;
+  /*font-size: 100%; */
+}
 
 h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
@@ -69,8 +71,10 @@ a:visited { color: #a0a; }
 }
 
 .title {
-  display: inline-block;
-  margin-bottom: 2em;
+    padding: 0;
+    display: inline-block;
+    margin-bottom: 2em;
+    font-size: 100%; 
 }
 
 .title a {
