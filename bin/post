@@ -1,0 +1,4 @@
+#!/bin/sh
+datetime=$(date +"%Y-%m-%d-")
+filename=$datetime$1".markdown"
+touch _posts/$filename
