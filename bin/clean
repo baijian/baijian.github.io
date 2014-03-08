@@ -16,7 +16,7 @@ fi
 deploypath="${binpath}/../_deploy"
 if [ -d $deploypath ]; then
     rm -fr $deploypath
-    if [ $? -eq 0]; then
+    if [ $? -eq 0 ]; then
         suc_mutex=$[suc_mutex+1]
         echo "\033[32;40mDelete ${deploypath} Successful... \033[0m"
     else
