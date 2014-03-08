@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>build-your-site-with-jekyll</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>build-your-site-with-jekyll</h2>
+<p class="meta">08 Mar 2014</p>
+
+<div class="post">
+<p><a href="http://jekyllrb.com">Jekyll</a> is a software which is managed by <code>rubygems</code>,you can
+use <code>gem install jekyll</code> to install it. I will not guide you how to use <code>jekyll</code>, you
+can view its offical site to learn to use it.</p>
+
+<p>I will show you just three shell scripts which is writen by me to help you build and
+deploy your static site, ofcourse all content will be write in markdown syntax which
+is the best syntax I like.</p>
+
+<p>Before you begin your tour of static site, maybe your should create a repository
+on github, maybe name it as <code>${name}.github.io</code>(do not ask me why, you should know it).
+Then you checkout to a <code>source</code> branch, which place all your site source codes, and from
+now on you will always stay in branch <code>source</code>, next I will introduce for you my three
+shell scripts, and you just place them in a new directory which is called <code>bin</code>, and then
+add <code>bin</code> to jekyll exclude(just add <code>exclude: [&#39;bin&#39;]</code> to your <code>_config.yml</code>).</p>
+
+<h3>clean</h3>
+
+<p>The first script is the most simple, and it just help you clean some tmp directories and
+files.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/sh</span>
+<span class="nv">binpath</span><span class="o">=</span><span class="k">$(</span><span class="nb">cd</span> <span class="sb">`</span>dirname <span class="nv">$0</span><span class="sb">`</span><span class="p">;</span> <span class="nb">pwd</span><span class="k">)</span>
+<span class="nv">suc_mutex</span><span class="o">=</span>0
+<span class="nv">fail_mutex</span><span class="o">=</span>0
+<span class="nv">sitepath</span><span class="o">=</span><span class="s2">&quot;${binpath}/../_site&quot;</span>
+<span class="k">if</span> <span class="o">[</span> -d <span class="nv">$sitepath</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span>rm -fr <span class="nv">$sitepath</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -eq 0 <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">        </span><span class="nv">suc_mutex</span><span class="o">=</span><span class="nv">$[</span>suc_mutex+1<span class="o">]</span>
+        <span class="nb">echo</span> <span class="s2">&quot;\033[32;40mDelete ${sitepath} Successful... \033[0m&quot;</span>
+    <span class="k">else</span>
+<span class="k">        </span><span class="nv">fail_mutex</span><span class="o">=</span><span class="nv">$[</span>fail_mutex+1<span class="o">]</span>
+        <span class="nb">echo</span> <span class="s2">&quot;\033[31;40mDelete ${sitepath} Fail! \033[0m&quot;</span>
+    <span class="k">fi</span>
+<span class="k">fi</span>
+<span class="nv">deploypath</span><span class="o">=</span><span class="s2">&quot;${binpath}/../_deploy&quot;</span>
+<span class="k">if</span> <span class="o">[</span> -d <span class="nv">$deploypath</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span>rm -fr <span class="nv">$deploypath</span>
+    <span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -eq 0 <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">        </span><span class="nv">suc_mutex</span><span class="o">=</span><span class="nv">$[</span>suc_mutex+1<span class="o">]</span>
+        <span class="nb">echo</span> <span class="s2">&quot;\033[32;40mDelete ${deploypath} Successful... \033[0m&quot;</span>
+    <span class="k">else</span>
+<span class="k">        </span><span class="nv">fail_mutex</span><span class="o">=</span><span class="nv">$[</span>fail_mutex+1<span class="o">]</span>
+        <span class="nb">echo</span> <span class="s2">&quot;\033[31;40mDelete ${deploypath} Fail! \033[0m&quot;</span>
+    <span class="k">fi</span>
+<span class="k">fi</span>
+
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$suc_mutex</span> -eq 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$fail_mutex</span> -eq 0 <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;\033[32;40mAlready clean! \033[0m&quot;</span>
+<span class="k">elif</span> <span class="o">[</span> <span class="nv">$suc_mutex</span> -gt 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="o">[</span> <span class="nv">$fail_mutex</span> -eq 0 <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;\033[32;40mClean successful! \033[0m&quot;</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<h3>post</h3>
+
+<p>post script is to help you add a post of your site.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/sh</span>
+<span class="nv">binpath</span><span class="o">=</span><span class="k">$(</span><span class="nb">cd</span> <span class="sb">`</span>dirname <span class="nv">$0</span><span class="sb">`</span><span class="p">;</span> <span class="nb">pwd</span><span class="k">)</span>
+<span class="nv">postpath</span><span class="o">=</span><span class="s2">&quot;${binpath}/../_posts&quot;</span>
+<span class="nv">date</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d&quot;</span><span class="k">)</span>
+<span class="nb">time</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%T&quot;</span><span class="k">)</span>
+<span class="nv">postname</span><span class="o">=</span><span class="s2">&quot;$date-$1.markdown&quot;</span>
+<span class="nv">filename</span><span class="o">=</span><span class="nv">$postpath</span>/<span class="nv">$postname</span>
+touch <span class="nv">$filename</span>
+<span class="nb">echo</span> <span class="s2">&quot;---</span>
+<span class="s2">layout: post</span>
+<span class="s2">title: \&quot;$1\&quot;</span>
+<span class="s2">date: $date $time</span>
+<span class="s2">comments: true</span>
+<span class="s2">categories: </span>
+<span class="s2">---&quot;</span> &gt; <span class="nv">$filename</span>
+vim <span class="nv">$filename</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$?</span> -eq 0 <span class="o">]</span><span class="p">;</span><span class="k">then</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;\033[32;40mAdd post ${filename} Successful! \033[0m&quot;</span>
+<span class="k">else</span>
+<span class="k">    </span><span class="nb">echo</span> <span class="s2">&quot;\033[31;40mTo add ${filename} Fail! \033[0m&quot;</span>
+<span class="k">fi</span>
+</code></pre></div>
+
+<h3>deploy</h3>
+
+<p>deploy script help your to build your site and push your site to your repository&#39;s master
+branch, then you can view your site by <code>http://$[name].github.io</code>,and in alternative 
+you can also publish your site to your own server.</p>
+
+<div class="highlight"><pre><code class="bash"><span class="c">#!/bin/sh</span>
+<span class="nv">binpath</span><span class="o">=</span><span class="k">$(</span><span class="nb">cd</span> <span class="sb">`</span>dirname <span class="nv">$0</span><span class="sb">`</span><span class="p">;</span> <span class="nb">pwd</span><span class="k">)</span>
+<span class="nv">deploypath</span><span class="o">=</span><span class="s2">&quot;${binpath}/../_deploy/&quot;</span>
+<span class="nv">sitepath</span><span class="o">=</span><span class="s2">&quot;${binpath}/../_site/&quot;</span>
+<span class="nb">cd</span> <span class="k">${</span><span class="nv">binpath</span><span class="k">}</span>/../
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mBuilding site... \033[0m&quot;</span>
+jekyll build
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mDeploying site... \033[0m&quot;</span>
+rm -fr _deploy
+git clone -b master . _deploy/ --single-branch
+<span class="nb">cd </span>_deploy
+rm -fr ./*
+<span class="nb">cd</span> ..
+cp -r _site/* _deploy/
+<span class="nb">cd </span>_deploy
+git add .
+git add -u
+<span class="nv">now</span><span class="o">=</span><span class="k">$(</span>date +<span class="s2">&quot;%Y-%m-%d %H:%M:%S&quot;</span><span class="k">)</span>
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mUpdating site... \033[0m&quot;</span>
+git commit -m <span class="s2">&quot;Site update at $now&quot;</span>
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mPush site to github... \033[0m&quot;</span>
+git push origin master --force
+<span class="nb">cd</span> ..
+git push origin master --force
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mPublish site to your server... \033[0m&quot;</span>
+<span class="c">#rsync -avz --delete _site/ name@ip:/home/www/blog</span>
+<span class="nb">echo</span> <span class="s2">&quot;\033[32;40mComplete! \033[0m&quot;</span>
+</code></pre></div>
+
+<p>Have fun with them, and any requirements tell me below and I will satisfy you quickly.</p>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+</html>
