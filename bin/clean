@@ -1,4 +1,32 @@
 #!/bin/sh
+binpath=$(cd `dirname $0`; pwd)
+suc_mutex=0
+fail_mutex=0
+sitepath="${binpath}/../_site"
+if [ -d $sitepath ]; then
+    rm -fr $sitepath
+    if [ $? -eq 0 ]; then
+        suc_mutex=$[suc_mutex+1]
+        echo "\033[32;40mDelete ${sitepath} Successful... \033[0m"
+    else
+        fail_mutex=$[fail_mutex+1]
+        echo "\033[31;40mDelete ${sitepath} Fail! \033[0m"
+    fi
+fi
+deploypath="${binpath}/../_deploy"
+if [ -d $deploypath ]; then
+    rm -fr $deploypath
+    if [ $? -eq 0]; then
+        suc_mutex=$[suc_mutex+1]
+        echo "\033[32;40mDelete ${deploypath} Successful... \033[0m"
+    else
+        fail_mutex=$[fail_mutex+1]
+        echo "\033[31;40mDelete ${deploypath} Fail! \033[0m"
+    fi
+fi
 
-rm -fr _deploy
-rm -fr _site
+if [ $suc_mutex -eq 0 ] && [ $fail_mutex -eq 0 ]; then
+    echo "\033[32;40mAlready clean! \033[0m"
+elif [ $suc_mutex -gt 0 ] && [ $fail_mutex -eq 0 ]; then
+    echo "\033[32;40mClean successful! \033[0m"
+fi

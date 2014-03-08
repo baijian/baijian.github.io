@@ -1,33 +1,28 @@
 #!/bin/sh
-
-rm -fr _deploy/
-rm -fr _site/
+binpath=$(cd `dirname $0`; pwd)
+deploypath="${binpath}/../_deploy/"
+sitepath="${binpath}/../_site/"
+cd ${binpath}/../
+echo "\033[32;40mBuilding site... \033[0m"
 jekyll build
-
+echo "\033[32;40mDeploying site... \033[0m"
+rm -fr _deploy
 git clone -b master . _deploy/ --single-branch
-
 cd _deploy
-
 rm -fr ./*
-
 cd ..
-
 cp -r _site/* _deploy/
-
 cd _deploy
-
 git add .
-
 git add -u
-
 now=$(date +"%Y-%m-%d %H:%M:%S")
-
+echo "\033[32;40mUpdating site... \033[0m"
 git commit -m "Site update at $now"
-
+echo "\033[32;40mPush site to github... \033[0m"
 git push origin master --force
-
 cd ..
-
+echo "\033[32;40mPush site source to github... \033[0m"
 git push origin master --force
-
+echo "\033[32;40mPublish site to your server... \033[0m"
 rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
+echo "\033[32;40mComplete! \033[0m"
