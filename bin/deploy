@@ -21,7 +21,6 @@ git commit -m "Site update at $now"
 echo "\033[32;40mPush site to github... \033[0m"
 git push origin master --force
 cd ..
-echo "\033[32;40mPush site source to github... \033[0m"
 git push origin master --force
 echo "\033[32;40mPublish site to your server... \033[0m"
 rsync -avz --delete _site/ root@162.243.84.70:/root/www/blog
