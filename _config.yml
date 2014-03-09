@@ -5,3 +5,4 @@ pygments: true
 encoding: utf-8
 
 exclude: ['bin']
+exclude: ['vendor']

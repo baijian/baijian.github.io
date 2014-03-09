@@ -1,3 +1,4 @@
 source 'http://ruby.taobao.org'
 
-gem 'jekyll'
+ruby '1.9.3'
+gem 'jekyll', '1.4.3'
