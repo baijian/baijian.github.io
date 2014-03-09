@@ -11,8 +11,8 @@ use `gem install jekyll` to install it. I will not guide you how to use `jekyll`
 can view its offical site to learn to use it.
 
 I will show you just three shell scripts which is writen by me to help you build and
-deploy your static site, ofcourse all content will be write in markdown syntax which
-is the best syntax I like.
+deploy your static site. I recommend you to write your blog using `markdown` syntax
+which is the best syntax I like.
 
 Before you begin your tour of static site, maybe your should create a repository
 on github, maybe name it as `${name}.github.io`(do not ask me why, you should know it).
