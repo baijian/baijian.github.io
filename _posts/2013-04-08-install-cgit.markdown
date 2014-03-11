@@ -6,9 +6,9 @@ comments: true
 categories: 
 ---
 
+### Install cgit using nginx + spawn-fcgi
 
-###Install cgit using nginx + spawn-fcgi
 cgit is web frontend for git repositories writen with c language.
-<!-- more -->
+
 {% gist 5337702 %}
 
