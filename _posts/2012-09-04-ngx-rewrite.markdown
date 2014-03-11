@@ -19,7 +19,6 @@ nginx的rewrite模块使得你可以通过正则表达式匹配、return redirec
 
 选择一个location进行处理,如果改变uri,一个新的location将会被搜索,如果循环超过10次,将会自动报500错误
 
-<!-- more -->
 ### return指令(server,location,if)
 
 return code [text] | URL
@@ -45,7 +44,6 @@ redirect : 返回一个临时的跳转(http code 302),这个是当replacement st
 
 permanent : 返回一个永久跳转(http code 301)
 
-
 ### break指令(server,location,if)
 
 stops processing the current set of ngx\_http\_rewrite\_module directives.
@@ -54,19 +52,28 @@ stops processing the current set of ngx\_http\_rewrite\_module directives.
 ### if指令(server,location)
 
 if(condition){
+
     ....
+
 }
 
-condition:
-```
-variable name false: empty string, any string start with "0"
-use = !=
-match a variable with a string using "~" "~*"(忽略大小写)
-check if a file exist with "-f" "!-f"
-check directory "-d" "!-d"
-"-e" "!-e" check a file,directory,or a symbolic
-"-x" "!-x" check for executable file
-```
+建议if少用,有时想用if的时候,考虑下是否可以用`try_files`指令^-^.
+
+#### 条件
+
+* 一个变量的如果是空字符串或者是0就代码`false`
+
+* 用`=`或者`!=`操作符进行变量的比较
+
+* 用`~`和`~*`来进行正则的匹配判断
+
+* `-f`和`!-f`判断文件是否存在
+
+* `-d`和`!-d`判断目录是否存在
+
+* `-e`和`!-e`判断文件,目录或者link是否存在
+
+* `-x`和`!-x`文件是否有可执行权限
 
 ### The end
 
@@ -78,6 +85,7 @@ server {
     listen 80;
     server_name localhost;
     root /path/to/your/project;
+    index index.php;
     location / {
         rewrite ^/(.*)$ /index.php/$1 last;
     }
