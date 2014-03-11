@@ -35,8 +35,6 @@ ids to curl the api, after all requests are finished, all data will be set into 
 I put all logic to the api. At last I found each request should query mysql and each set to redis is based
 on <code>HTTP</code>, so the speed is so slow even I execute the curl in parallel.So it is a bad idea. </p>
 
-<!--more-->
-
 <p>Then I think for a while, I search for redis documents, I found <a href="http://redis.io/topics/mass-insert">this</a>.
 It tell us how to insert mass data into redis quickly.</p>
 

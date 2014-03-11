@@ -36,8 +36,6 @@ standard. The RabbitMQ server is writen in Erlang and is built
 on the <a href="http://en.wikipedia.org/wiki/Open_Telecom_Platform">Open Telecom Platform</a>
 framework for clustering and failover.</p>
 
-<!--more-->
-
 <p><strong>Components of RabbitMQ Project</strong></p>
 
 <ul>
@@ -111,46 +109,48 @@ Producer就是向一个队列里面发消息,没什么特别的,
 下面写一段最简单的Java代码例子,当然你需要启动好RabbitMQ server,下载并安装好
 RabbitMQ的java client library.下面的代码中我也会通过一些注释来解释一些概念.</p>
 
-<p><strong>Sender</strong>
-```java
-public class RabbitMQSend {</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">private final static String QUEUE_NAME = &quot;test&quot;;
+<p><strong>Sender</strong></p>
 
-public static void main(String[] args) throws Exception {
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQSend</span> <span class="o">{</span>
 
-    ConnectionFactory factory = new ConnectionFactory();
-    factory.setHost(&quot;localhost&quot;);
-    /* 
-       新建一个client到broker的连接,broker就是RabbitMQ-server
-       RabbitMQ的client到broker的连接是TCP连接.
-     */
-    Connection connection = factory.newConnection();
-    /*
-       按AMQP协议创建了一个连接后需要创建一个Channel
-       并通过它能进行通信.
-     */
-    Channel channel = connection.createChannel();
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
 
-    /*
-       声明一个队列来给接受生产者发送的消息,除了QUEUE_NAME外的参数下面会介绍.
-     */
-    channel.queueDeclare(QUEUE_NAME, false, false, false, null);
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+        <span class="cm">/* </span>
+<span class="cm">           新建一个client到broker的连接,broker就是RabbitMQ-server</span>
+<span class="cm">           RabbitMQ的client到broker的连接是TCP连接.</span>
+<span class="cm">         */</span>
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="cm">/*</span>
+<span class="cm">           按AMQP协议创建了一个连接后需要创建一个Channel</span>
+<span class="cm">           并通过它能进行通信.</span>
+<span class="cm">         */</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
 
-    String message = &quot;Hello World!&quot;;
+        <span class="cm">/*</span>
+<span class="cm">           声明一个队列来给接受生产者发送的消息,除了QUEUE_NAME外的参数下面会介绍.</span>
+<span class="cm">         */</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
 
-    //第一个参数是exchange,这里先默认它空,下面再介绍,null这个参数也下面介绍.
-    channel.basicPublish(&quot;&quot;, QUEUE_NAME, null, message.getBytes());
-    System.out.println(&quot;[RabbitMQ-Sender] Send &#39;&quot; + message + &quot;&#39;&quot;);
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Hello World!&quot;</span><span class="o">;</span>
 
-    channel.close();
-    connection.close();
-}
+        <span class="c1">//第一个参数是exchange,这里先默认它空,下面再介绍,null这个参数也下面介绍.</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[RabbitMQ-Sender] Send &#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
 </code></pre></div>
-<p>}
-```</p>
 
 <p><strong>Receiver</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
 
@@ -160,7 +160,7 @@ public static void main(String[] args) throws Exception {
 
         <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
         <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
-
+        
         <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
         <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[*] Waiting for messages. To exit press CTRL+C&quot;</span><span class="o">);</span>
 
@@ -178,6 +178,7 @@ public static void main(String[] args) throws Exception {
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p>好了,第一个简单的例子完成了,你可以自己编译运行它看看效果,
 之所以说它简单是因为,很多默认值隐藏了一些概念,
 下面通过其他的例子来引出这些概念.</p>
@@ -194,7 +195,8 @@ public static void main(String[] args) throws Exception {
 面得代码修改的,我会结合代码在注释里进行解释.</p>
 
 <p><strong>Sender</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQSend</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQSend</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
 
@@ -230,8 +232,10 @@ public static void main(String[] args) throws Exception {
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>Receiver</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">long</span> <span class="n">WAIT_FOR_NEXT_MESSAGE</span> <span class="o">=</span> <span class="mi">1L</span><span class="o">;</span>
@@ -294,6 +298,7 @@ public static void main(String[] args) throws Exception {
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <h3>Pub-Sub &amp; Routing</h3>
 
 <p>下面会讲解Pub-Sub通信模式,在讲解Pub-Sub模式时会引入一个重要的概念:exchange,前面只所以没有提到那是
@@ -306,7 +311,8 @@ public static void main(String[] args) throws Exception {
 <p><strong>fanout</strong></p>
 
 <p>这是最简单的exchange,fanout类型的exchange仅仅将接收到的消息广播到所有队列.下面看代码:</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
 
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
@@ -349,11 +355,13 @@ public static void main(String[] args) throws Exception {
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>direct</strong></p>
 
 <p>这里提到的direct类型的exchange就需要用到binding key的参数了,队列在绑定到exchange
 的时候需要指定一个bindKey,这样exchange就知道如何分配源头过来的消息了.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Send</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Send</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
 
@@ -405,23 +413,34 @@ public static void main(String[] args) throws Exception {
    <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p>上面Receiver的代码声明exchange的时候用到了<em>exchangeDeclarePassive(exchange, type)</em>,那么就顺便讲解下
 几个不同的exchange声明的区别.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">);</span>
 </code></pre></div>
+
 <p>上面的代码是声明一个non-autodelete, non-durable且没有额外参数的exchange.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">);</span>
 </code></pre></div>
+
 <p>这比上面的例子多了一个可以自定义的选择参数durable,是否持久化.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">);</span>
 </code></pre></div>
+
 <p>这又比上面的例子多了两个可控制的参数.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span><span class="n">internal</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span><span class="n">internal</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
 </code></pre></div>
+
 <p>这里又多了一个参数internal,如果设置为true,那么这个exchange将不能直接pub消息到client.
 这是参数最全的一种情况,这里是完全由自己去设置exchange的参数.</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclarePassive</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclarePassive</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">);</span>
 </code></pre></div>
+
 <p>这里会先检查EXCHANGE_NAME是否存在,不存在会报404:channel异常.</p>
 
 <p><strong>topics</strong></p>

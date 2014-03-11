@@ -27,14 +27,13 @@
 <div class="post">
 <h3>Design a Topology</h3>
 
-<p><img src="/images/topology.png" /></p>
-
-<!--more-->    
+<p><img style="width:620px;" src="/images/topology.png" /></p>
 
 <h3>Data source &amp; RabbitMQ</h3>
 
 <p><strong>pycat.py</strong></p>
-<div class="highlight"><pre><code class="python language-python" data-lang="python"><span class="c">#!/usr/bin/env python</span>
+
+<div class="highlight"><pre><code class="python"><span class="c">#!/usr/bin/env python</span>
 <span class="c"># -*- coding: utf-8 -*-</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">pika</span>
@@ -50,6 +49,7 @@
     <span class="n">line</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdin</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
 <span class="n">connection</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </code></pre></div>
+
 <p><strong>Collector Data</strong></p>
 
 <p>$ tail -F /var/log/access.log | python pycat.py</p>
@@ -57,7 +57,8 @@
 <h3>AlogSpout</h3>
 
 <p><strong>Key Codes</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AlogSpout</span> <span class="kd">extends</span> <span class="n">BaseRichSpout</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AlogSpout</span> <span class="kd">extends</span> <span class="n">BaseRichSpout</span> <span class="o">{</span>
 
     <span class="kd">private</span> <span class="n">SpoutOutputCollector</span> <span class="n">_collector</span><span class="o">;</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">Scheme</span> <span class="n">_scheme</span><span class="o">;</span>
@@ -88,21 +89,25 @@
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>Explanation</strong></p>
 
 <p>One stream is a just a tuple, all of the tuple will be created and handled
 throughout a cluster parallelly. You should define each field of the tuple.
 Like:</p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="n">Fields</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fields</span><span class="o">(</span><span class="s">&quot;str&quot;</span><span class="o">);</span>
+
+<div class="highlight"><pre><code class="java"><span class="n">Fields</span> <span class="n">f</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fields</span><span class="o">(</span><span class="s">&quot;str&quot;</span><span class="o">);</span>
 <span class="n">Fields</span> <span class="n">ff</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Fields</span><span class="o">(</span><span class="s">&quot;url_id&quot;</span><span class="o">,</span> <span class="s">&quot;time_local&quot;</span><span class="o">);</span>
 </code></pre></div>
+
 <p>Method <em>nextTuple</em> should be non-block, storm emit msg in single thread.
 Method <em>ack</em> and <em>fail</em> is used in message reliablity.</p>
 
 <h3>FilterUrlBolt</h3>
 
 <p><strong>Key Codes</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FilterUrlBolt</span> <span class="kd">extends</span> <span class="n">BaseRichBolt</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FilterUrlBolt</span> <span class="kd">extends</span> <span class="n">BaseRichBolt</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="n">OutputCollector</span> <span class="n">_collector</span><span class="o">;</span>
     <span class="kd">public</span> <span class="nf">FilterUrlBolt</span><span class="o">()</span> <span class="o">{</span>
     <span class="o">}</span>
@@ -127,6 +132,7 @@ Method <em>ack</em> and <em>fail</em> is used in message reliablity.</p>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>Explanation</strong></p>
 
 <p>Bolt is used to handle messages and emit new messages to the next Bolt.
@@ -135,7 +141,8 @@ Method <em>ack</em> must be invoked to tell storm the message is handled.</p>
 <h3>CountBolt</h3>
 
 <p><strong>Key Code</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountBolt</span> <span class="kd">extends</span> <span class="n">BaseRichBolt</span> <span class="o">{</span>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CountBolt</span> <span class="kd">extends</span> <span class="n">BaseRichBolt</span> <span class="o">{</span>
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="nf">execute</span><span class="o">(</span><span class="n">Tuple</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
         <span class="kt">int</span> <span class="n">url_id</span> <span class="o">=</span> <span class="n">input</span><span class="o">.</span><span class="na">getInteger</span><span class="o">(</span><span class="mi">0</span><span class="o">);</span>
@@ -184,6 +191,7 @@ Method <em>ack</em> must be invoked to tell storm the message is handled.</p>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>Explanation</strong></p>
 
 <p>CountBolt just increase by 1 and persistent count number to 
@@ -193,8 +201,9 @@ not emit message any more.</p>
 <h3>AlogCountTopology</h3>
 
 <p><strong>Key Code</strong></p>
-<div class="highlight"><pre><code class="java language-java" data-lang="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AlogCountTopology</span> <span class="o">{</span>
 
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">AlogCountTopology</span> <span class="o">{</span>
+    
     <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
         <span class="n">TopologyBuilder</span> <span class="n">builder</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TopologyBuilder</span><span class="o">();</span>
         <span class="n">builder</span><span class="o">.</span><span class="na">setSpout</span><span class="o">(</span><span class="s">&quot;Alog&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">AlogSpout</span><span class="o">(...),</span> <span class="mi">10</span><span class="o">);</span>
@@ -213,6 +222,7 @@ not emit message any more.</p>
     <span class="o">}</span>
 <span class="o">}</span>
 </code></pre></div>
+
 <p><strong>Explanation</strong></p>
 
 <p>One Topology will be executed in one single or severial wokers.
