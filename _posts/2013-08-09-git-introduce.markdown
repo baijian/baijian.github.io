@@ -18,8 +18,6 @@ If you like using CVS, you should in some kind of mental institution or somewher
 Now [github](https://github.com) has been the best and cool SCM system, it is very very popular,
 and if your are a programer, you will be shamed of not having a github account.
 
-<!-- more -->
-
 ### some features of git
 
 * A project is a git repository and every client have all of the codes.
@@ -117,7 +115,7 @@ will be compressed and write to a file which name is releated to the *SHA* hash
 of contents. The file is placed in *.git/objects* directory, and the sub-directory
 name is the first two character of the *SHA* hash.Blew is the code of ruby.
 
-```ruby
+{% highlight ruby %}
 header = blob + ' ' + content.size + \0
 body = content
 new_content = header + body
@@ -127,7 +125,7 @@ path = ".git/objects/**/*****..."
 File.open(path, 'w') {
     |f| f.write(compressed)
 }
-```
+{% endhighlight %}
 
 ### The end
 

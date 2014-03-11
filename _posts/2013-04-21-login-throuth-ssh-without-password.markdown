@@ -6,9 +6,6 @@ comments: true
 categories: 
 ---
 
-If you want to login to your server through ssh without password,
-   just do as follows:
-
-<!-- more -->
+If you want to login to your server through ssh without password,just do as follows:
 
 {% gist 5428853 %}

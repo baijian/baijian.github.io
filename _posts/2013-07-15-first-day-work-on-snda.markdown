@@ -12,7 +12,6 @@ system instead of windows which is always egg ache.
 Ok, begin my reinstall process, I insert my Ubuntu LiveCD, and reboot then enter BIOS, modify 
 boot order, then save and boot.
 
-<!-- more -->
 
 After a while, I will get a install view, but I just got a black screen. I have realized that it must
 be a graphics problem, then I go to ubuntu for help,Then I find the solution:
@@ -36,12 +35,13 @@ Some small points to remember:
 
 2. run my tunnel.sh shell every 3 miniutes
 
-    ```*/3 * * * * /bin/bash /path/to/shell/script
+    */3 * * * * /bin/bash /path/to/shell/script
 
 3.  open ubuntu update center settings and close update prompt, just update system manually input
 
-    ```sudo apt-get update```
-    ```sudo apt-get upgrade```
+    ```$ sudo apt-get update```
+
+    ```$ sudo apt-get upgrade```
 
 With every thing aboove is done, then I install some application softwares and then begin my work on SNDA,
 Hope a great begin.
