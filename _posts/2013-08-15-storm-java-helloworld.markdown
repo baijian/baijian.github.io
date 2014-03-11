@@ -16,7 +16,6 @@ So, I will begin to do a research on storm to meet our requirements and solve
 some problems may appear in the future.And I will record my learning process in 
 the blog and also provide some codes. Hope it will be helpful for you.
 
-<!-- More -->
 ### What is storm
 
 OK, the first question of every thing and I think is the hardest question to answer.
@@ -128,7 +127,7 @@ to see the result.
 
 **Spout**
 
-```java
+{% highlight java %}
 public class HelloWorldSpout extends BaseRichSpout {
 
     SpoutOutputCollector collector;
@@ -149,11 +148,11 @@ public class HelloWorldSpout extends BaseRichSpout {
         collector.emit(new Values("Hello"));
     }
 }
-```
+{% endhighlight %}
 
 **Bolt**
 
-```java
+{% highlight java %}
 public class HelloWorldBolt extends BaseBasicBolt {
 
     @Override
@@ -181,11 +180,11 @@ public class HelloWorldBolt extends BaseBasicBolt {
         declarer.declare(new Fields("world"));
     }
 }
-```
+{% endhighlight %}
 
 **Topology**
 
-```java
+{% highlight java %}
 public class HelloWorldTopology {
 
     public static void main(String[] args) throws Exception {
@@ -212,13 +211,15 @@ public class HelloWorldTopology {
         }
     }
 }
-```
+{% endhighlight %}
 
 ### Test it in your local computer and then submit to cluster
 
 $ mvn package
 
-$ mvn exec:java -Dexec.classpathScope=compile -Dexec.mainClass=package.name.to.your.main.class
+$ mvn exec:java -Dexec.classpathScope=compile \
+
+-Dexec.mainClass=package.name.to.your.main.class
 
 $ storm jar /path/to/jar package.name.your.main.class TopologyName 
 

@@ -9,14 +9,13 @@ categories:
 
 ### Design a Topology
 
-<img src="/images/topology.png" />
+<img style="width:620px;" src="/images/topology.png" />
     
-<!--more-->    
 ### Data source & RabbitMQ
 
 **pycat.py**
 
-```python
+{% highlight python %}
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import sys
@@ -32,7 +31,7 @@ while line:
     channel.basic_publish(exchange='', routing_key='rabbit-alog', body=line)
     line = sys.stdin.readline()
 connection.close()
-```
+{% endhighlight %}
 
 **Collector Data**
 
@@ -42,7 +41,7 @@ $ tail -F /var/log/access.log | python pycat.py
 
 **Key Codes**
 
-```java
+{% highlight java %}
 public class AlogSpout extends BaseRichSpout {
 
     private SpoutOutputCollector _collector;
@@ -73,7 +72,7 @@ public class AlogSpout extends BaseRichSpout {
         }
     }
 }
-```
+{% endhighlight %}
 
 **Explanation**
 
@@ -81,10 +80,11 @@ One stream is a just a tuple, all of the tuple will be created and handled
 throughout a cluster parallelly. You should define each field of the tuple.
 Like:
 
-```java
+{% highlight java %}
 Fields f = new Fields("str");
 Fields ff = new Fields("url_id", "time_local");
-```
+{% endhighlight %}
+
 Method *nextTuple* should be non-block, storm emit msg in single thread.
 Method *ack* and *fail* is used in message reliablity.
 
@@ -92,7 +92,7 @@ Method *ack* and *fail* is used in message reliablity.
 
 **Key Codes**
 
-```java
+{% highlight java %}
 public class FilterUrlBolt extends BaseRichBolt {
     private OutputCollector _collector;
     public FilterUrlBolt() {
@@ -117,7 +117,7 @@ public class FilterUrlBolt extends BaseRichBolt {
         declarer.declare(_scheme.getOutputFields());
     }
 }
-```
+{% endhighlight %}
 
 **Explanation**
 
@@ -128,7 +128,7 @@ Method *ack* must be invoked to tell storm the message is handled.
 
 **Key Code**
 
-```java
+{% highlight java %}
 public class CountBolt extends BaseRichBolt {
     @Override
     public execute(Tuple input) {
@@ -177,7 +177,7 @@ public class CountBolt extends BaseRichBolt {
         _collector.ack(input);
     }
 }
-```
+{% endhighlight %}
 
 **Explanation**
 
@@ -189,7 +189,7 @@ not emit message any more.
 
 **Key Code**
 
-```java
+{% highlight java %}
 public class AlogCountTopology {
     
     public static void main(String[] args) {
@@ -209,7 +209,7 @@ public class AlogCountTopology {
         }
     }
 }
-```
+{% endhighlight %}
 
 **Explanation**
 

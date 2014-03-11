@@ -6,7 +6,6 @@ comments: true
 categories: 
 ---
 
-
 We select RabbitMQ as our storm spout, so we will introduce 
 a basic usage of RabbitMQ first.All blow description will under ***RabbitMQ 3.1.5***
 
@@ -17,8 +16,6 @@ that implements the [Advanced Message Queuing Protocol](http://en.wikipedia.org/
 standard. The RabbitMQ server is writen in Erlang and is built 
 on the [Open Telecom Platform](http://en.wikipedia.org/wiki/Open_Telecom_Platform)
 framework for clustering and failover.
-
-<!--more-->
 
 **Components of RabbitMQ Project**
 
@@ -93,7 +90,8 @@ Producer就是向一个队列里面发消息,没什么特别的,
 RabbitMQ的java client library.下面的代码中我也会通过一些注释来解释一些概念.
 
 **Sender**
-```java
+
+{% highlight java %}
 public class RabbitMQSend {
 
     private final static String QUEUE_NAME = "test";
@@ -129,11 +127,11 @@ public class RabbitMQSend {
     }
 
 }
-```
+{% endhighlight %}
 
 **Receiver**
 
-```java
+{% highlight java %}
 public class RabbitMQRecv {
 
     private final static String QUEUE_NAME = "test";
@@ -161,7 +159,7 @@ public class RabbitMQRecv {
         }
     }
 }
-```
+{% endhighlight %}
 
 好了,第一个简单的例子完成了,你可以自己编译运行它看看效果,
 之所以说它简单是因为,很多默认值隐藏了一些概念,
@@ -180,7 +178,7 @@ RabbitMQ默认的消息分发规则是轮询,RabbitMQ的消息支持acknowledgme
 
 **Sender**
 
-```java
+{% highlight java %}
 public class RabbitMQSend {
 
     private final static String QUEUE_NAME = "test";
@@ -216,11 +214,11 @@ public class RabbitMQSend {
         connection.close();
     }
 }
-```
+{% endhighlight %}
 
 **Receiver**
 
-```java
+{% highlight java %}
 public class RabbitMQRecv {
 
     private final static String QUEUE_NAME = "test";
@@ -283,7 +281,7 @@ public class RabbitMQRecv {
         }
     }
 }
-```
+{% endhighlight %}
 
 ### Pub-Sub & Routing
 
@@ -298,7 +296,7 @@ public class RabbitMQRecv {
 
 这是最简单的exchange,fanout类型的exchange仅仅将接收到的消息广播到所有队列.下面看代码:
 
-```java
+{% highlight java %}
 public class Sender {
     private static final String EXCHANGE_NAME = "test";
 
@@ -341,14 +339,14 @@ public class Recv {
         }
     }
 }
-```
+{% endhighlight %}
 
 **direct**
 
 这里提到的direct类型的exchange就需要用到binding key的参数了,队列在绑定到exchange
 的时候需要指定一个bindKey,这样exchange就知道如何分配源头过来的消息了.
 
-```java
+{% highlight java %}
 public class Send {
 
     private static final String EXCHANGE_NAME = "test";
@@ -400,35 +398,40 @@ public class Recv {
            }
    }
 }
-```
+{% endhighlight %}
 
 上面Receiver的代码声明exchange的时候用到了*exchangeDeclarePassive(exchange, type)*,那么就顺便讲解下
 几个不同的exchange声明的区别.
 
-```java
+{% highlight java %}
 channel.exchangeDeclare(EXCHANGE_NAME, "direct");
-```
+{% endhighlight %}
+
 上面的代码是声明一个non-autodelete, non-durable且没有额外参数的exchange.
 
-```java
+{% highlight java %}
 channel.exchangeDeclare(EXCHANGE_NAME, "direct", durable);
-```
+{% endhighlight %}
+
 这比上面的例子多了一个可以自定义的选择参数durable,是否持久化.
 
-```java
+{% highlight java %}
 channel.exchangeDeclare(EXCHANGE_NAME, "direct", durable, autoDelete, Map<String, Object> args);
-```
+{% endhighlight %}
+
 这又比上面的例子多了两个可控制的参数.
 
-```java
+{% highlight java %}
 channel.exchangeDeclare(EXCHANGE_NAME, "direct", durable, autoDelete,internal, args);
-```
+{% endhighlight %}
+
 这里又多了一个参数internal,如果设置为true,那么这个exchange将不能直接pub消息到client.
 这是参数最全的一种情况,这里是完全由自己去设置exchange的参数.
 
-```java
+{% highlight java %}
 channel.exchangeDeclarePassive(EXCHANGE_NAME);
-```
+{% endhighlight %}
+
 这里会先检查EXCHANGE_NAME是否存在,不存在会报404:channel异常.
 
 
@@ -446,6 +449,3 @@ spout共享一个队列共同消费这个队列的消息,利用RabbitMQ的ack机
 
 这里的RPC即Remote procedure call可以运用在将没有线程概念且是串行执行的任务并行化执行(当然这样的任务
 是需要拿到执行的返回结果的),并行话执行就可以将时间花销从线性相加降低到并行执行最长的那个时间,这里暂时不做详细解释.
-
-
-

@@ -19,7 +19,6 @@ standard itself. However, most servers, clients and proxy software impose some l
 and security reasons.`Apache 2.3` by default limits each header size to 8190 bytes and there can by at
 most 100 headers in a single request.
 
-<!--more-->
 
 `Content-Type` is the `MIME type` of the body of the request which is used with `POST` and `PUT` requests.
 Let's see some examples:

@@ -14,8 +14,6 @@ located, maybe in different nodes in a network or in different processes being e
 in the same machine or same application.ZeroMQ is the abstraction of good old sockets,
 a very different kind of sockets.
 
-<!-- more -->
-
 ### Features
 
 * asynchronous and data can be queued
