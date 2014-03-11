@@ -50,13 +50,17 @@ RabbitMQ有依赖于erlang,erlang的版本太老会对RabbitMQ的性能有一些
 旧一点的erlang版本不支持诸如SSL,基于HTTP的像management这样得插件.所以首先需要安装
 比较新一点的erlang版本,RHEL5或者CentOS 5的系统可以用下面的方式装erlang.
 
-$ wget -o /etc/yum.repos.d/epel-erlang.repo http://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo
+$ wget -o /etc/yum.repos.d/epel-erlang.repo \
+
+[http://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo](http://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo)
 
 $ yum install erlang || yum update erlang
 
 下面继续安装RabbitMQ Server.
 
-$ wget http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm
+$ wget \
+
+[http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm](http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm)
 
 $ rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc
 
