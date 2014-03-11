@@ -38,8 +38,6 @@ nginx的rewrite模块使得你可以通过正则表达式匹配、return redirec
 
 <p>选择一个location进行处理,如果改变uri,一个新的location将会被搜索,如果循环超过10次,将会自动报500错误</p>
 
-<!-- more -->
-
 <h3>return指令(server,location,if)</h3>
 
 <p>return code [text] | URL</p>
@@ -72,20 +70,24 @@ flag能够终止指令的进一步处理.</p>
 
 <h3>if指令(server,location)</h3>
 
-<p>if(condition){
-    ....
-}</p>
+<p>if(condition){</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">....
+</code></pre></div>
+<p>}</p>
 
-<p>condition:
-<code>
-variable name false: empty string, any string start with &quot;0&quot;
-use = !=
-match a variable with a string using &quot;~&quot; &quot;~*&quot;(忽略大小写)
-check if a file exist with &quot;-f&quot; &quot;!-f&quot;
-check directory &quot;-d&quot; &quot;!-d&quot;
-&quot;-e&quot; &quot;!-e&quot; check a file,directory,or a symbolic
-&quot;-x&quot; &quot;!-x&quot; check for executable file
-</code></p>
+<p>建议if少用,有时想用if的时候,考虑下是否可以用<code>try_files</code>指令^-^.</p>
+
+<h4>条件</h4>
+
+<ul>
+<li><p>一个变量的如果是空字符串或者是0就代码<code>false</code></p></li>
+<li><p>用<code>=</code>或者<code>!=</code>操作符进行变量的比较</p></li>
+<li><p>用<code>~</code>和<code>~*</code>来进行正则的匹配判断</p></li>
+<li><p><code>-f</code>和<code>!-f</code>判断文件是否存在</p></li>
+<li><p><code>-d</code>和<code>!-d</code>判断目录是否存在</p></li>
+<li><p><code>-e</code>和<code>!-e</code>判断文件,目录或者link是否存在</p></li>
+<li><p><code>-x</code>和<code>!-x</code>文件是否有可执行权限</p></li>
+</ul>
 
 <h3>The end</h3>
 
@@ -95,6 +97,7 @@ in php project.</p>
     listen 80;
     server_name localhost;
     root /path/to/your/project;
+    index index.php;
     location / {
         rewrite ^/(.*)$ /index.php/$1 last;
     }
