@@ -5,23 +5,25 @@ date: 2013-04-21 13:57
 comments: true
 categories: 
 ---
+
 Struts2 is a popular Java MVC framework, it is an action-based presentation framework;
 well, how to use struts2 in your java web project? In simple terms, just add filter and 
 filter-mapping in your web.xml file, as followings:
-<!-- more -->
-```
-    <filter>
-        <filter-name>struts2</filter-name>
-        <filter-class>
-            org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
-        </filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>struts2</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-```
-then add your struts.xml file in your classes directory to config
+
+{% highlight xml %}
+<filter>
+    <filter-name>struts2</filter-name>
+    <filter-class>
+        org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+    </filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>struts2</filter-name>
+    <url-pattern>/*</url-pattern>
+</filter-mapping>
+{% endhighlight %}
+
+Then add your struts.xml file in your classes directory to config
 your action to your pages.
 
 OK, then you want to use spring framework to help you manage different components,
@@ -29,7 +31,8 @@ Spring is a dependency injection framework and it has to know which beans it mus
 and how to bind them together and that is what applicationContext.xml(default) file is for.
 You can define your struts2 action class in your applicationContext.xml file.
 Intergrate into your web project is also very simple, just add following contents to your web.xml:
-```
+
+{% highlight xml %}
 <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring-beans.xml</param-value>
@@ -39,7 +42,8 @@ Intergrate into your web project is also very simple, just add following content
         org.springframework.web.context.ContextLoaderListener
     </listener-class>
 </listener>
-```
+{% endhighlight %}
+
 As you see above, context-params label just load spring configuration file,
 and listener is used to start up spring container through listener.
 And then you should config your bean in your spring configuration file 
@@ -52,7 +56,8 @@ with automatic databases access class generation using proxy implementation
 of the services defined. It will reduce many database work codes.
 If you use spring to manage your mybatis, It will be convenient.
 Just add following contents to your spring config files:
-```
+
+{% highlight xml %}
 <bean id="DBPoolDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
     <property name="driverClass" value="com.mysql.jdbc.Driver" />
     <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/test" />
@@ -69,7 +74,8 @@ Just add following contents to your spring config files:
 <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
     <property name="basePackage" value="com.baijian.web.helloworld.mapper" />
 </bean>
-```
+{% endhighlight %}
+
 First bean is to config your database pool, 
 second bean is to config your transaction manager to decide and control your transaction,
 then you should config your SqlSessionFactory ,this bean will provide SessionFactory instance 

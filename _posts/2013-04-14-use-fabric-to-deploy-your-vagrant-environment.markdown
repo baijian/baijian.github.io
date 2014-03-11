@@ -12,19 +12,19 @@ post-install and post-configure tasks with it.
 
 Below is step by step guide:
 
-* 1. Install virtual box in your ubuntu
+* 1.Install virtual box in your ubuntu
 
-* 2. Install vagrant in your ubuntu
+* 2.Install vagrant in your ubuntu
 
-* 3. Install fabric in your ubuntu
+* 3.Install fabric in your ubuntu
 
-* 4. Add default box in your system, it may take some minutes
+* 4.Add default box in your system, it may take some minutes
 
 $ vagrant add box precise32 http://files.vagrantup.com/precise32.box
 
-* 5. Start up your default vagrant
+* 5.Start up your default vagrant
 
-* 6. Touch fabfile.py in your current directory with below contents:
+* 6.Touch fabfile.py in your current directory with below contents:
 
 {% highlight python %}
 from fabric.api import *
@@ -37,4 +37,4 @@ def uname():
     run('uname -a')
 {% endhighlight %}
 
-* 7. Input ```fab vagrant uname``` in  your terminal, then you will get some messages.
+* 7.Input ```fab vagrant uname``` in  your terminal, then you will get some messages.
