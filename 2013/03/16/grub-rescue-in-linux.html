@@ -25,51 +25,42 @@
 <p class="meta">16 Mar 2013</p>
 
 <div class="post">
-<h2>Grub rescue prompt to rescue your linux</h2>
-
-<h2>What is grub?</h2>
+<h3>What is grub?</h3>
 
 <p>Of course you should know it if you have ever used linux operating system.
-....
-&lt;!-- more--&gt;</p>
+I will directly to describe you one of my experience to use grub rescue prompt to rescue my linux.</p>
 
-<h2>What is happening...</h2>
+<h3>What is happening...</h3>
 
-<p>Today I start my linux , it prompt
-<code>
-    grub rescue&gt;
-</code>
-Then I don&#39;t know what to do, then google it, then do as the following:</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">    grub rescue&gt; ls
-    grub rescue&gt; ls (hd0,3)/boot
+<p>One day I start my linux , it prompt</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">grub rescue&gt;
 </code></pre></div>
-<p>Then I know where my vmlinuz and initrd file locate.</p>
-
-<p>Then do the following:
-<code>
-    grub rescue&gt; set prefix=(hd0,2)/boot/grub
-    grub rescue&gt; insmod(hd0,2)/boot/grub/linux.mod
-    grub rescue&gt; insmod part_msdos (maybe not need)
-    grub rescue&gt; insmod ext2
-    grub rescue&gt; insmod gzip
-    grub rescue&gt; set root=(hd0,2)
-    grub rescue&gt; linux /boot/vmlinuz-3.0.0-*** root=/dev/sda3 ro
-    grub rescue&gt; initrd /boot/initrd.img-3.0.0-***
-</code></p>
-
-<p>Then boot your system again:
-<code>
-    grub rescue&gt; boot
-</code></p>
-
-<p>OK, that&#39;s all, may be you can start your linux system, into the system, you can fix your grub
-confis maybe /boot/grub/grub.cfg or /boot/grub/grub.conf.</p>
+<p>Then I don&#39;t know what to do, then google it, then do as the following:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">grub rescue&gt; ls
+grub rescue&gt; ls (hd0,3)/boot
+</code></pre></div>
+<p>Then I know where my vmlinuz and initrd file locate.
+Then I do the following:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">grub rescue&gt; set prefix=(hd0,2)/boot/grub
+grub rescue&gt; insmod(hd0,2)/boot/grub/linux.mod
+grub rescue&gt; insmod part_msdos (maybe not need)
+grub rescue&gt; insmod ext2
+grub rescue&gt; insmod gzip
+grub rescue&gt; set root=(hd0,2)
+grub rescue&gt; linux /boot/vmlinuz-3.0.0-*** root=/dev/sda3 ro
+grub rescue&gt; initrd /boot/initrd.img-3.0.0-***
+</code></pre></div>
+<p>Then boot system again:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">grub rescue&gt; boot
+</code></pre></div>
+<p>OK, that&#39;s all, I can start my linux system, into the system, I fix my grub
+confis <code>/boot/grub/grub.cfg</code>.</p>
 
 <p>因为平时喜欢瞎折腾，改改配置啥的，很有可能会改错导致启动不了，记得又一次改了XWindow的
 什么配置，然后启动不了了，难道要重装？当然不必要，只要你有一个linux的Desktop系统
 就行，也就是一个微型版的linux系统啦，当然你可以自己制作一个，也可以自己刻录一个，
 我是随身携带一个gentoo的u盘系统，一个是喜欢折腾gentoo随时需要装gentoo玩玩，还有就是
-linux系统一被我改错文件了可以用u启动起来然后再挂载磁盘然后再将改错的内容改回去,哈哈～</p>
+linux系统一被我改错文件了可以用u启动起来然后再挂载磁盘然后再将改错的内容改回去,哈哈,一起来折腾*inux吧~</p>
 
 </div>
 
