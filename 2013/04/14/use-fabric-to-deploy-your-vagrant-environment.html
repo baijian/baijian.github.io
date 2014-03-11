@@ -32,29 +32,17 @@ post-install and post-configure tasks with it.</p>
 <p>Below is step by step guide:</p>
 
 <ul>
-<li><ol>
-<li>Install virtual box in your ubuntu</li>
-</ol></li>
-<li><ol>
-<li>Install vagrant in your ubuntu</li>
-</ol></li>
-<li><ol>
-<li>Install fabric in your ubuntu</li>
-</ol></li>
-<li><ol>
-<li>Add default box in your system, it may take some minutes</li>
-</ol></li>
+<li><p>1.Install virtual box in your ubuntu</p></li>
+<li><p>2.Install vagrant in your ubuntu</p></li>
+<li><p>3.Install fabric in your ubuntu</p></li>
+<li><p>4.Add default box in your system, it may take some minutes</p></li>
 </ul>
 
 <p>$ vagrant add box precise32 http://files.vagrantup.com/precise32.box</p>
 
 <ul>
-<li><ol>
-<li>Start up your default vagrant</li>
-</ol></li>
-<li><ol>
-<li>Touch fabfile.py in your current directory with below contents:</li>
-</ol></li>
+<li><p>5.Start up your default vagrant</p></li>
+<li><p>6.Touch fabfile.py in your current directory with below contents:</p></li>
 </ul>
 
 <div class="highlight"><pre><code class="python"><span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="o">*</span>
@@ -68,7 +56,7 @@ post-install and post-configure tasks with it.</p>
 </code></pre></div>
 
 <ul>
-<li>7. Input <code>fab vagrant uname</code> in  your terminal, then you will get some messages.</li>
+<li>7.Input <code>fab vagrant uname</code> in  your terminal, then you will get some messages.</li>
 </ul>
 
 </div>

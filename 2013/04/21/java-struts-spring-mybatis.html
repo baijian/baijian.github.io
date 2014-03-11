@@ -27,40 +27,41 @@
 <div class="post">
 <p>Struts2 is a popular Java MVC framework, it is an action-based presentation framework;
 well, how to use struts2 in your java web project? In simple terms, just add filter and 
-filter-mapping in your web.xml file, as followings:
-&lt;!-- more --&gt;
-<code>
-    &lt;filter&gt;
-        &lt;filter-name&gt;struts2&lt;/filter-name&gt;
-        &lt;filter-class&gt;
-            org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
-        &lt;/filter-class&gt;
-    &lt;/filter&gt;
-    &lt;filter-mapping&gt;
-        &lt;filter-name&gt;struts2&lt;/filter-name&gt;
-        &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
-    &lt;/filter-mapping&gt;
-</code>
-then add your struts.xml file in your classes directory to config
+filter-mapping in your web.xml file, as followings:</p>
+
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;filter&gt;</span>
+    <span class="nt">&lt;filter-name&gt;</span>struts2<span class="nt">&lt;/filter-name&gt;</span>
+    <span class="nt">&lt;filter-class&gt;</span>
+        org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter
+    <span class="nt">&lt;/filter-class&gt;</span>
+<span class="nt">&lt;/filter&gt;</span>
+<span class="nt">&lt;filter-mapping&gt;</span>
+    <span class="nt">&lt;filter-name&gt;</span>struts2<span class="nt">&lt;/filter-name&gt;</span>
+    <span class="nt">&lt;url-pattern&gt;</span>/*<span class="nt">&lt;/url-pattern&gt;</span>
+<span class="nt">&lt;/filter-mapping&gt;</span>
+</code></pre></div>
+
+<p>Then add your struts.xml file in your classes directory to config
 your action to your pages.</p>
 
 <p>OK, then you want to use spring framework to help you manage different components,
 Spring is a dependency injection framework and it has to know which beans it must create
 and how to bind them together and that is what applicationContext.xml(default) file is for.
 You can define your struts2 action class in your applicationContext.xml file.
-Intergrate into your web project is also very simple, just add following contents to your web.xml:
-<code>
-&lt;context-param&gt;
-    &lt;param-name&gt;contextConfigLocation&lt;/param-name&gt;
-    &lt;param-value&gt;classpath:spring-beans.xml&lt;/param-value&gt;
-&lt;/context-param&gt;
-&lt;listener&gt;
-    &lt;listener-class&gt;
+Intergrate into your web project is also very simple, just add following contents to your web.xml:</p>
+
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;context-param&gt;</span>
+    <span class="nt">&lt;param-name&gt;</span>contextConfigLocation<span class="nt">&lt;/param-name&gt;</span>
+    <span class="nt">&lt;param-value&gt;</span>classpath:spring-beans.xml<span class="nt">&lt;/param-value&gt;</span>
+<span class="nt">&lt;/context-param&gt;</span>
+<span class="nt">&lt;listener&gt;</span>
+    <span class="nt">&lt;listener-class&gt;</span>
         org.springframework.web.context.ContextLoaderListener
-    &lt;/listener-class&gt;
-&lt;/listener&gt;
-</code>
-As you see above, context-params label just load spring configuration file,
+    <span class="nt">&lt;/listener-class&gt;</span>
+<span class="nt">&lt;/listener&gt;</span>
+</code></pre></div>
+
+<p>As you see above, context-params label just load spring configuration file,
 and listener is used to start up spring container through listener.
 And then you should config your bean in your spring configuration file 
 <code>spring-beans.xml</code>above example.</p>
@@ -71,26 +72,27 @@ mapping between SQL and objects. It is very powerful SQL mappings framework
 with automatic databases access class generation using proxy implementation
 of the services defined. It will reduce many database work codes.
 If you use spring to manage your mybatis, It will be convenient.
-Just add following contents to your spring config files:
-<code>
-&lt;bean id=&quot;DBPoolDataSource&quot; class=&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot; destroy-method=&quot;close&quot;&gt;
-    &lt;property name=&quot;driverClass&quot; value=&quot;com.mysql.jdbc.Driver&quot; /&gt;
-    &lt;property name=&quot;jdbcUrl&quot; value=&quot;jdbc:mysql://localhost:3306/test&quot; /&gt;
-    &lt;property name=&quot;user&quot; value=&quot;root&quot; /&gt;
-    &lt;property name=&quot;password&quot; value=&quot;******&quot; /&gt;
-&lt;/bean&gt;
-&lt;bean id=&quot;transactionManager&quot; class=&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;&gt;
-    &lt;property name=&quot;dataSource&quot; ref=&quot;DBPoolDataSource&quot; /&gt;
-&lt;/bean&gt;
-&lt;bean id=&quot;sqlSessionFactory&quot; class=&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;&gt;
-    &lt;property name=&quot;configLocation&quot; value=&quot;classpath:mybatis-config.xml&quot;&gt;&lt;/property&gt;
-    &lt;property name=&quot;dataSource&quot; ref=&quot;DBPoolDataSource&quot;&gt;&lt;/property&gt;
-&lt;/bean&gt;
-&lt;bean class=&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;&gt;
-    &lt;property name=&quot;basePackage&quot; value=&quot;com.baijian.web.helloworld.mapper&quot; /&gt;
-&lt;/bean&gt;
-</code>
-First bean is to config your database pool, 
+Just add following contents to your spring config files:</p>
+
+<div class="highlight"><pre><code class="xml"><span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;DBPoolDataSource&quot;</span> <span class="na">class=</span><span class="s">&quot;com.mchange.v2.c3p0.ComboPooledDataSource&quot;</span> <span class="na">destroy-method=</span><span class="s">&quot;close&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;driverClass&quot;</span> <span class="na">value=</span><span class="s">&quot;com.mysql.jdbc.Driver&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;jdbcUrl&quot;</span> <span class="na">value=</span><span class="s">&quot;jdbc:mysql://localhost:3306/test&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;user&quot;</span> <span class="na">value=</span><span class="s">&quot;root&quot;</span> <span class="nt">/&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;password&quot;</span> <span class="na">value=</span><span class="s">&quot;******&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;transactionManager&quot;</span> <span class="na">class=</span><span class="s">&quot;org.springframework.jdbc.datasource.DataSourceTransactionManager&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;dataSource&quot;</span> <span class="na">ref=</span><span class="s">&quot;DBPoolDataSource&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">id=</span><span class="s">&quot;sqlSessionFactory&quot;</span> <span class="na">class=</span><span class="s">&quot;org.mybatis.spring.SqlSessionFactoryBean&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;configLocation&quot;</span> <span class="na">value=</span><span class="s">&quot;classpath:mybatis-config.xml&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;dataSource&quot;</span> <span class="na">ref=</span><span class="s">&quot;DBPoolDataSource&quot;</span><span class="nt">&gt;&lt;/property&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+<span class="nt">&lt;bean</span> <span class="na">class=</span><span class="s">&quot;org.mybatis.spring.mapper.MapperScannerConfigurer&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">&quot;basePackage&quot;</span> <span class="na">value=</span><span class="s">&quot;com.baijian.web.helloworld.mapper&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;/bean&gt;</span>
+</code></pre></div>
+
+<p>First bean is to config your database pool, 
 second bean is to config your transaction manager to decide and control your transaction,
 then you should config your SqlSessionFactory ,this bean will provide SessionFactory instance 
 of MyBatis, it will create sqlSession and close it automatic. 
