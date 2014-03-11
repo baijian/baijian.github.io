@@ -29,37 +29,46 @@
 I will use fabric to the deployment stack, I will do all the fine grained 
 post-install and post-configure tasks with it.</p>
 
-<p>Below is step by step guide:
-&lt;!--more --&gt;
-* 1. Install virtual box in your ubuntu
-* 2. Install vagrant in your ubuntu
-* 3. Install fabric in your ubuntu
-* 4. Add default box in your system, it may take some minutes
-```</p>
-
-<blockquote>
-<p>vagrant add box precise32 http://files.vagrantup.com/precise32.box
-```</p>
-</blockquote>
+<p>Below is step by step guide:</p>
 
 <ul>
-<li>5. Start up your default vagrant</li>
 <li><ol>
-<li>Touch fabfile.py in your current directory with below contents:
-<code>python
-from fabric.api import *
-def vagrant():
-env.user=&#39;vagrant&#39;
-env.hosts=[&#39;127.0.0.1:2222&#39;]
-result = local(&#39;vagrant ssh-config | grep IdentityFile&#39;, capture=True)
-env.key_filename = result.split()[1].trip(&#39;\&quot;&#39;)
-def uname():
-run(&#39;uname -a&#39;)
-</code></li>
+<li>Install virtual box in your ubuntu</li>
 </ol></li>
 <li><ol>
-<li>Input <code>fab vagrant uname</code> in  your terminal, then you will get some messages.</li>
+<li>Install vagrant in your ubuntu</li>
 </ol></li>
+<li><ol>
+<li>Install fabric in your ubuntu</li>
+</ol></li>
+<li><ol>
+<li>Add default box in your system, it may take some minutes</li>
+</ol></li>
+</ul>
+
+<p>$ vagrant add box precise32 http://files.vagrantup.com/precise32.box</p>
+
+<ul>
+<li><ol>
+<li>Start up your default vagrant</li>
+</ol></li>
+<li><ol>
+<li>Touch fabfile.py in your current directory with below contents:</li>
+</ol></li>
+</ul>
+
+<div class="highlight"><pre><code class="python"><span class="kn">from</span> <span class="nn">fabric.api</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="k">def</span> <span class="nf">vagrant</span><span class="p">():</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">user</span><span class="o">=</span><span class="s">&#39;vagrant&#39;</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">hosts</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;127.0.0.1:2222&#39;</span><span class="p">]</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">local</span><span class="p">(</span><span class="s">&#39;vagrant ssh-config | grep IdentityFile&#39;</span><span class="p">,</span> <span class="n">capture</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">key_filename</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">trip</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\&quot;</span><span class="s">&#39;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">uname</span><span class="p">():</span>
+    <span class="n">run</span><span class="p">(</span><span class="s">&#39;uname -a&#39;</span><span class="p">)</span>
+</code></pre></div>
+
+<ul>
+<li>7. Input <code>fab vagrant uname</code> in  your terminal, then you will get some messages.</li>
 </ul>
 
 </div>
