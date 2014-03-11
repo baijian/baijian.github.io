@@ -31,8 +31,6 @@ system instead of windows which is always egg ache.</p>
 <p>Ok, begin my reinstall process, I insert my Ubuntu LiveCD, and reboot then enter BIOS, modify 
 boot order, then save and boot.</p>
 
-<!-- more -->
-
 <p>After a while, I will get a install view, but I just got a black screen. I have realized that it must
 be a graphics problem, then I go to ubuntu for help,Then I find the solution:</p>
 
@@ -55,11 +53,12 @@ So I create <a href="https://github.com/baijian/config-files">Personal-Linux-Con
 <p>change <code>/etc/ssh_config</code> to add <code>GSSAPIAuthentication no</code></p></li>
 <li><p>run my tunnel.sh shell every 3 miniutes</p>
 
-<p>```*/3 * * * * /bin/bash /path/to/shell/script</p></li>
+<p>*/3 * * * * /bin/bash /path/to/shell/script</p></li>
 <li><p>open ubuntu update center settings and close update prompt, just update system manually input</p>
 
-<p><code>sudo apt-get update</code>
-<code>sudo apt-get upgrade</code></p></li>
+<p><code>$ sudo apt-get update</code></p>
+
+<p><code>$ sudo apt-get upgrade</code></p></li>
 </ol>
 
 <p>With every thing aboove is done, then I install some application softwares and then begin my work on SNDA,

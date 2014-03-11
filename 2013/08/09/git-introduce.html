@@ -36,8 +36,6 @@ If you like using CVS, you should in some kind of mental institution or somewher
 <p>Now <a href="https://github.com">github</a> has been the best and cool SCM system, it is very very popular,
 and if your are a programer, you will be shamed of not having a github account.</p>
 
-<!-- more -->
-
 <h3>some features of git</h3>
 
 <ul>
@@ -133,7 +131,8 @@ objects in git. There are four types of objects, <em>tree</em>,<em>blob</em>,<em
 will be compressed and write to a file which name is releated to the <em>SHA</em> hash 
 of contents. The file is placed in <em>.git/objects</em> directory, and the sub-directory
 name is the first two character of the <em>SHA</em> hash.Blew is the code of ruby.</p>
-<div class="highlight"><pre><code class="ruby language-ruby" data-lang="ruby"><span class="n">header</span> <span class="o">=</span> <span class="n">blob</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">content</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="p">\</span><span class="mi">0</span>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">header</span> <span class="o">=</span> <span class="n">blob</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">content</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="p">\</span><span class="mi">0</span>
 <span class="n">body</span> <span class="o">=</span> <span class="n">content</span>
 <span class="n">new_content</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">body</span>
 <span class="n">sha</span> <span class="o">=</span> <span class="no">Digest</span><span class="o">::</span><span class="no">SHA1</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(</span><span class="n">new_content</span><span class="p">)</span>
@@ -143,6 +142,7 @@ name is the first two character of the <em>SHA</em> hash.Blew is the code of rub
     <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">compressed</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
+
 <h3>The end</h3>
 
 <p>At last , recommend a website to learn git: <a href="http://git-scm.com/book">ProGit</a></p>
