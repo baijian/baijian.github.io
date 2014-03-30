@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>php-project-with-composer</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>php-project-with-composer</h2>
+<p class="meta">29 Mar 2014</p>
+
+<div class="post">
+<p>All java developers like to use <code>maven</code> to manage their project, it is very convenient, and many phpers will
+ask if there is a tool like <code>maven</code> can help we phpers to manage our projects. Ofcourse it has, it&#39;s called
+<code>Composer</code>.</p>
+
+<p><a href="http://getcomposer.org">Composer</a> is a dependency manager for PHP, it help you declare, manage and install
+dependencies of PHP projects. It is writen in php language completely.</p>
+
+<h3>Install and use it as a linux command</h3>
+
+<p>First of all, we should install composer, you can install it within your single project, but I like to install it globally.</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">$ curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/bin
+</code></pre></div><div class="highlight"><pre><code class="text language-text" data-lang="text">$ mv $HOME/bin/composer.phar $HOME/bin/composer
+</code></pre></div>
+<p>As always I do, I like to place some frequently-used command tools in my $HOME/bin
+directory, ofcourse $HOME/bin is in my <code>PATH</code> variable.Then I can use it by just
+inputing <code>composer</code> command.</p>
+
+<h3>Init PHP web project using composer</h3>
+
+<p>PHP as a easy to use and high development efficiency language, a lot of medium and
+small-sized enterprises like to use it as their main languages. With some caching
+technology it will be a suitable solutions for them. You use php to support your
+website you should select an open-source php framework, and you want to use
+<code>composer</code>, your php framework must support <code>composer</code>.</p>
+
+<p>I will recommend you a year&#39;s best php framework and use <code>composer</code> to
+create and manage your web project based on it.
+The framework is <a href="http://laravel.com/">Laravel</a>,it is not faster
+than <a href="http://www.yafdev.com/">yaf</a>, but I think it is a very good php framework and
+its efficiency is totally acceptable to us.</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">$ composer create-project laravel/laravel [ProjectName] --prefer-dist
+</code></pre></div>
+<p>After execute the command above, the first level of your project directory is as below:</p>
+<div class="highlight"><pre><code class="text language-text" data-lang="text">--app/
+--bootstrap/
+--public/
+--vendor/
+artisan
+composer.json
+composer.lock
+CONTRIBUTING.md
+phpunit.xml
+readme.md
+server.php
+</code></pre></div>
+<h3>Use composer in common PHP library project</h3>
+
+<p>I want to write a php library, first I will need to init my project with a file
+called <code>composer.json</code> which is used to declare the library, below is my repo
+<a href="https://github.com/baijian/AhoCorasick-PHP">AhoCorasick-PHP&#39;s</a> <code>composer.json</code>.</p>
+
+<div class="highlight"><pre><code class="json"><span class="p">{</span>
+    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baijian/ahocorasick&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;keywords&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ahocorasick&quot;</span><span class="p">],</span>
+        <span class="nt">&quot;license&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;authors&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baijian&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;jian.baij@gmail.com&quot;</span><span class="p">,</span>
+            <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;Learner&quot;</span>
+        <span class="p">}</span>
+    <span class="p">],</span>
+        <span class="nt">&quot;homepage&quot;</span><span class="p">:</span> <span class="s2">&quot;http://joinjoy.me&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;autoload&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;psr-4&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="nt">&quot;Baijian\\Algorithm\\&quot;</span> <span class="p">:</span> <span class="s2">&quot;src/&quot;</span>
+            <span class="p">}</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;require&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;php&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;=5.3.0&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;require-dev&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;phpunit/phpunit&quot;</span><span class="p">:</span> <span class="s2">&quot;3.7.*&quot;</span>
+        <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Then execute <code>composer install --prefer-dist</code>, it will install the dependences in the folder of
+<code>vendor</code>, and then create a file <code>composer.lock</code> for you.<code>vendor</code> should be ignored.
+Then you created <code>src</code> folder and then write your code file in your <code>src</code> folder.</p>
+
+<h3>Composer usage in detail</h3>
+
+<p>I will tell you some features of <code>composer</code> to help you use it better.</p>
+
+<ul>
+<li><p>Cache dist packages in your $HOME direcoty</p>
+
+<p>When you input <code>composer install</code> command, it help your install your project&#39;s
+dependency library in your ignore directory <code>vendor</code>, and if you input
+<code>composer install --prefer-dist</code>, it will automatically stores archive when download
+a dist package and when you use the same package in your other project, it will be
+network saving.</p></li>
+</ul>
+
+<h3>PHP learning resources</h3>
+
+<p><a href="http://www.phptherightway.com/">PHP-The-Right-Way</a></p>
+
+<p><a href="https://github.com/bigcompany/know-your-http">Know-your-http</a></p>
+
+<p><a href="https://github.com/php-fig/fig-standards">PHP-standards</a></p>
+
+<p><a href="https://github.com/c9s/phpbrew">Phpbrew-manage-php-versions</a></p>
+
+<p><a href="https://github.com/zendframework/zf2">Zend-Framework</a></p>
+
+<p><a href="http://laravel.com/">Laravel-PHP-Framework</a></p>
+
+<p><a href="http://www.yafdev.com/">Yaf-PHP-Framework</a></p>
+
+<p><a href="http://www.laruence.com/2011/09/13/2139.html">PHP-extension-dev-resources</a></p>
+
+<p><a href="http://www.laruence.com/2009/04/28/719.html">PHP-extension-dev-guide</a></p>
+
+<p>And some other good resources tell me ^-^.</p>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-49477407-1', 'joinjoy.me');
+        ga('send', 'pageview');
+
+    </script>
+</html>
