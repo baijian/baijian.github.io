@@ -99,7 +99,9 @@ called `composer.json` which is used to declare the library, below is my repo
 
 Then execute `composer install --prefer-dist`, it will install the dependences in the folder of
 `vendor`, and then create a file `composer.lock` for you.`vendor` should be ignored.
-Then you created `src` folder and then write your code file in your `src` folder.
+Then you created `src` folder and then write your code file in your `src` folder.At last in the
+root directory of you project, you create a `index.php` file and require the `vendor/autoload.php`
+file, then you can use the code in `src` folder to test your php library.
 
 ### Composer usage in detail
 
