@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "use fabric to deploy your vagrant environment"
+title: "fabric to deploy vagrant env"
 date: 2013-04-14 23:33
 comments: true
 categories: 

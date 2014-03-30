@@ -63,6 +63,74 @@ readme.md
 server.php
 ```
 
-### Use composer in other common PHP project
+### Use composer in common PHP library project
+
+I want to write a php library, first I will need to init my project with a file
+called `composer.json` which is used to declare the library, below is my repo
+[AhoCorasick-PHP's](https://github.com/baijian/AhoCorasick-PHP) `composer.json`.
+
+{% highlight json %}
+{
+    "name": "baijian/ahocorasick",
+        "description": "",
+        "keywords": ["ahocorasick"],
+        "license": "",
+        "authors": [
+        {
+            "name": "baijian",
+            "email": "jian.baij@gmail.com",
+            "role": "Learner"
+        }
+    ],
+        "homepage": "http://joinjoy.me",
+        "autoload": {
+            "psr-4": {
+                "Baijian\\Algorithm\\" : "src/"
+            }
+        },
+        "require": {
+            "php": ">=5.3.0"
+        },
+        "require-dev": {
+            "phpunit/phpunit": "3.7.*"
+        }
+}
+{% endhighlight %}
+
+Then execute `composer install --prefer-dist`, it will install the dependences in the folder of
+`vendor`, and then create a file `composer.lock` for you.`vendor` should be ignored.
+Then you created `src` folder and then write your code file in your `src` folder.
 
 ### Composer usage in detail
+
+I will tell you some features of `composer` to help you use it better.
+
+* Cache dist packages in your $HOME direcoty
+
+    When you input `composer install` command, it help your install your project's
+    dependency library in your ignore directory `vendor`, and if you input
+    `composer install --prefer-dist`, it will automatically stores archive when download
+    a dist package and when you use the same package in your other project, it will be
+    network saving.
+
+### PHP learning resources
+
+[PHP-The-Right-Way](http://www.phptherightway.com/)
+
+[Know-your-http](https://github.com/bigcompany/know-your-http)
+
+[PHP-standards](https://github.com/php-fig/fig-standards)
+
+[Phpbrew-manage-php-versions](https://github.com/c9s/phpbrew)
+
+[Zend-Framework](https://github.com/zendframework/zf2)
+
+[Laravel-PHP-Framework](http://laravel.com/)
+
+[Yaf-PHP-Framework](http://www.yafdev.com/)
+
+[PHP-extension-dev-resources](http://www.laruence.com/2011/09/13/2139.html)
+
+[PHP-extension-dev-guide](http://www.laruence.com/2009/04/28/719.html)
+
+And some other good resources tell me ^-^.
