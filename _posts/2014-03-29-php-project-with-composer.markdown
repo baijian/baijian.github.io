@@ -68,6 +68,8 @@ server.php
 I want to write a php library, first I will need to init my project with a file
 called `composer.json` which is used to declare the library, below is my repo
 [AhoCorasick-PHP's](https://github.com/baijian/AhoCorasick-PHP) `composer.json`.
+With using `psr-4`, you can use namespace `namespace Baijian\Algorithm` without
+making directory `Baijian` and `Alogorithm`, it's cool~
 
 {% highlight json %}
 {
