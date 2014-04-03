@@ -4,7 +4,7 @@ deploypath="${binpath}/../_deploy/"
 sitepath="${binpath}/../_site/"
 cd ${binpath}/../
 echo "\033[32;40mBuilding site... \033[0m"
-jekyll build
+bundle exec jekyll build
 echo "\033[32;40mDeploying site... \033[0m"
 rm -fr _deploy
 git clone -b master . _deploy/ --single-branch

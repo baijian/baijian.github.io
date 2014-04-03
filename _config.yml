@@ -4,4 +4,4 @@ pygments: true
 
 encoding: utf-8
 
-exclude: ['bin', 'vendor', 'Gemfile', 'Gemfile.lock', '.ruby-version', 'README.md']
+exclude: ['bin', 'vendor', 'Gemfile', 'Gemfile.lock', '.ruby-version', 'README.md', 'script']
