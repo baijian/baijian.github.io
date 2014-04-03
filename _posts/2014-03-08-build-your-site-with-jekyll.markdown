@@ -125,3 +125,8 @@ echo "\033[32;40mComplete! \033[0m"
 {% endhighlight %}
 
 Have fun with them, and any requirements tell me below and I will satisfy you quickly.
+
+### Attention
+
+**I will update my manner to use `jekyll` in the near future
+include the shell scripts above, so to see my [BlogRepo](https://github.com/baijian/baijian.github.io/tree/source) as the newest version**
