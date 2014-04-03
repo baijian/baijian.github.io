@@ -2,4 +2,4 @@ _site
 _deploy
 vendor
 .bundle
-Gemfile.lock
+bin
