@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>git-introduce</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>git-introduce</h2>
+<p class="meta">09 Aug 2013</p>
+
+<div class="post">
+<h3>what is git</h3>
+
+<p>Git is not subversion, git is a content-addressable filesystem which is a very powerful tool that you
+can easily use as more than just a VCS.</p>
+
+<p>As of Linus Torvalds&#39;s opnion Subversion has been the most pointless project ever started, 
+If you like using CVS, you should in some kind of mental institution or somewhere else.</p>
+
+<p>Now <a href="https://github.com">github</a> has been the best and cool SCM system, it is very very popular,
+and if your are a programer, you will be shamed of not having a github account.</p>
+
+<h3>some features of git</h3>
+
+<ul>
+<li><p>A project is a git repository and every client have all of the codes.</p></li>
+<li><p>Fast and simple local branch, you add a branch means just add a refs.</p></li>
+<li><p>Develop your project without network, as we know it is distributed.</p></li>
+</ul>
+
+<h3>How to install?</h3>
+
+<p><a href="https://help.github.com/articles/set-up-git">Install Guide</a></p>
+
+<ul>
+<li><p>CentOS</p>
+
+<p>$ yum install git</p></li>
+<li><p>Ubuntu</p>
+
+<p>$ sudo apt-get install git</p></li>
+<li><p>Mac</p>
+
+<p>$ brew install git</p></li>
+<li><p>Windows ?</p>
+
+<p>Oh, please, do not use windows any more ^-^</p></li>
+</ul>
+
+<h3>How to config?</h3>
+
+<p>$ ssh-keygen -t rsa -C &quot;xxx#xxmail.com&quot;</p>
+
+<p>$ git config --global user.name &quot;xxx&quot;</p>
+
+<p>$ git config --global user.email &quot;xxx#xxmail.com&quot;</p>
+
+<p>$ git config --global color.ui true</p>
+
+<h3>Init your project</h3>
+
+<p>$ mkdir demo &amp; cd demo</p>
+
+<p>$ git init </p>
+
+<p>$ echo &quot;test&quot; &gt; test.txt</p>
+
+<p>$ git add test.txt</p>
+
+<p>$ git commit -m &quot;add test file&quot;</p>
+
+<h3>Push your code to the central server</h3>
+
+<p>$ git remote add origin git@xxserver.com:<user>/<repo>.git</p>
+
+<p>$ git push origin master</p>
+
+<h3>Update your project and modify</h3>
+
+<p>$ git pull origin master</p>
+
+<p>$ git status</p>
+
+<p>$ echo &quot;test2&quot; &gt; test2.txt</p>
+
+<p>$ git commit -m &quot;add test2 file&quot;</p>
+
+<p>$ git push origin master</p>
+
+<h3>Exclude some files and view the modification history</h3>
+
+<p>To Exclude files you do not want to stage just add a <em>.gitignore</em> file 
+to your repository, and input <em>git log --graph</em> command to see modification 
+history of  your repository.</p>
+
+<h3>How to do teamwork with git?</h3>
+
+<p>Because of the low cost of adding a branch in git, so I choose branch in teamwork,
+<em>master</em> branch is ready to release to the app server, and any other branch is the 
+develop branch.</p>
+
+<p>If you want to release a new function, just merge the branch to the <em>mater</em> branch after it 
+passes the test.</p>
+
+<h3>How git works?</h3>
+
+<p>Git have two types of commands, one is <em>plumbing commands</em> as we always use, and 
+the other one is <em>porcelain commands</em> as we not always use.</p>
+
+<p>You must want to know how contents are stored in git, first you should understand
+objects in git. There are four types of objects, <em>tree</em>,<em>blob</em>,<em>commit</em>,
+<em>tag</em>; for example how <em>blob</em> are stored in git database? </p>
+
+<p>The contents of blob objects have <em>content header</em> and <em>content body</em>, the contents 
+will be compressed and write to a file which name is releated to the <em>SHA</em> hash 
+of contents. The file is placed in <em>.git/objects</em> directory, and the sub-directory
+name is the first two character of the <em>SHA</em> hash.Blew is the code of ruby.</p>
+
+<div class="highlight"><pre><code class="ruby"><span class="n">header</span> <span class="o">=</span> <span class="n">blob</span> <span class="o">+</span> <span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="n">content</span><span class="o">.</span><span class="n">size</span> <span class="o">+</span> <span class="p">\</span><span class="mi">0</span>
+<span class="n">body</span> <span class="o">=</span> <span class="n">content</span>
+<span class="n">new_content</span> <span class="o">=</span> <span class="n">header</span> <span class="o">+</span> <span class="n">body</span>
+<span class="n">sha</span> <span class="o">=</span> <span class="no">Digest</span><span class="o">::</span><span class="no">SHA1</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(</span><span class="n">new_content</span><span class="p">)</span>
+<span class="n">compressed</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">::</span><span class="n">deflate</span><span class="p">(</span><span class="n">new_content</span><span class="p">)</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s2">&quot;.git/objects/**/*****...&quot;</span>
+<span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="p">{</span>
+    <span class="o">|</span><span class="n">f</span><span class="o">|</span> <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">compressed</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3>The end</h3>
+
+<p>At last , recommend a website to learn git: <a href="http://git-scm.com/book">ProGit</a></p>
+
+<p>Or if git-scm was killed by <em>GxFxW</em>, you can view from <a href="https://github.com/progit/progit">Github-ProGit</a>,
+Ofcourse it is write in markdown and have almost all languages.</p>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-49477407-1', 'joinjoy.me');
+        ga('send', 'pageview');
+
+    </script>
+</html>

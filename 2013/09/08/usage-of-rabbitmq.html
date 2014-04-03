@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Usage-of-RabbitMQ</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+          </div>
+
+          <h2>Usage-of-RabbitMQ</h2>
+<p class="meta">08 Sep 2013</p>
+
+<div class="post">
+<p>We select RabbitMQ as our storm spout, so we will introduce 
+a basic usage of RabbitMQ first.All blow description will under <strong><em>RabbitMQ 3.1.5</em></strong></p>
+
+<p><strong>Definition from wikipedia</strong></p>
+
+<p>RabbitMQ is open source message broker software(message-oriented middleware)
+that implements the <a href="http://en.wikipedia.org/wiki/Advanced_Message_Queuing_Protocol">Advanced Message Queuing Protocol</a>
+standard. The RabbitMQ server is writen in Erlang and is built 
+on the <a href="http://en.wikipedia.org/wiki/Open_Telecom_Platform">Open Telecom Platform</a>
+framework for clustering and failover.</p>
+
+<p><strong>Components of RabbitMQ Project</strong></p>
+
+<ul>
+<li>The RabbitMQ exchange server itself</li>
+<li>Gateways for HTTP, STOMP and MQTT protocols</li>
+<li>AMQP client libraries for <strong>JAVA</strong>, <strong>Erlang</strong> and so on</li>
+<li>A plug-in platform for custom additions, plugins such as <strong><em>Management</em></strong> plug-in</li>
+</ul>
+
+<h3>Install RabbitMQ</h3>
+
+<p><strong>Mac OS X</strong></p>
+
+<p>$ brew update</p>
+
+<p>$ brew install rabbitmq</p>
+
+<p>$ export PATH=$PATH;/usr/local/sbin</p>
+
+<p>$ rabbitmq-server -detached</p>
+
+<p>$ rabbitmqctl status</p>
+
+<p>$ rabbitmqctl stop</p>
+
+<p><strong>RHEL Linux</strong></p>
+
+<p>You want to install RabbitMQ through <code>yum install rabbitmq-server</code>, 
+maybe the version is not the latest stable version. So you&#39;d better download
+the latest stable rpm package to install, with <code>yum</code> you can solve your dependency.</p>
+
+<p>RabbitMQ有依赖于erlang,erlang的版本太老会对RabbitMQ的性能有一些影响,而且
+旧一点的erlang版本不支持诸如SSL,基于HTTP的像management这样得插件.所以首先需要安装
+比较新一点的erlang版本,RHEL5或者CentOS 5的系统可以用下面的方式装erlang.</p>
+
+<p>$ wget -o /etc/yum.repos.d/epel-erlang.repo \</p>
+
+<p><a href="http://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo">http://repos.fedorapeople.org/repos/peter/erlang/epel-erlang.repo</a></p>
+
+<p>$ yum install erlang || yum update erlang</p>
+
+<p>下面继续安装RabbitMQ Server.</p>
+
+<p>$ wget \</p>
+
+<p><a href="http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm">http://www.rabbitmq.com/releases/rabbitmq-server/v3.1.5/rabbitmq-server-3.1.5-1.noarch.rpm</a></p>
+
+<p>$ rpm --import http://www.rabbitmq.com/rabbitmq-signing-key-public.asc</p>
+
+<p>$ yum install rabbitmq-server-3.1.5-1.noarch.rpm</p>
+
+<p>Then you can start or stop your RabbitMQ server.</p>
+
+<p><strong>Ubuntu Linux</strong></p>
+
+<p>Add blow to /etc/apt/source.list</p>
+
+<p>$ deb http://www.rabbitmq.com/debian testing main</p>
+
+<p>$ wget http://www.rabbitmq.com/rabbitmq-signing-key-public.asc</p>
+
+<p>$ sudo apt-key add rabbitmq-signing-key-public.asc</p>
+
+<p>$ sudo apt-get update</p>
+
+<p>$ sudo apt-get install rabbitmq-server</p>
+
+<h3>One Producer &amp; One Consumer</h3>
+
+<p>下面介绍RabbitMQ最简单地通信模式,从生产者发送消息,传递消息给消费者,
+以一个生产者一个消费者为例,消息在从生产者传递给消费者的过程中可以路由
+这个消息,或者缓存住或者直接丢掉.
+Producer就是向一个队列里面发消息,没什么特别的,
+所以是一个Producer还是多个Producer其实无所谓的.
+下面写一段最简单的Java代码例子,当然你需要启动好RabbitMQ server,下载并安装好
+RabbitMQ的java client library.下面的代码中我也会通过一些注释来解释一些概念.</p>
+
+<p><strong>Sender</strong></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQSend</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+        <span class="cm">/* </span>
+<span class="cm">           新建一个client到broker的连接,broker就是RabbitMQ-server</span>
+<span class="cm">           RabbitMQ的client到broker的连接是TCP连接.</span>
+<span class="cm">         */</span>
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="cm">/*</span>
+<span class="cm">           按AMQP协议创建了一个连接后需要创建一个Channel</span>
+<span class="cm">           并通过它能进行通信.</span>
+<span class="cm">         */</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+        <span class="cm">/*</span>
+<span class="cm">           声明一个队列来给接受生产者发送的消息,除了QUEUE_NAME外的参数下面会介绍.</span>
+<span class="cm">         */</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Hello World!&quot;</span><span class="o">;</span>
+
+        <span class="c1">//第一个参数是exchange,这里先默认它空,下面再介绍,null这个参数也下面介绍.</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[RabbitMQ-Sender] Send &#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></div>
+
+<p><strong>Receiver</strong></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+        
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[*] Waiting for messages. To exit press CTRL+C&quot;</span><span class="o">);</span>
+
+        <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
+
+        <span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="cm">/*</span>
+<span class="cm">               Consumer.nextDelivery() 将会阻塞直到下一个消息来.</span>
+<span class="cm">             */</span>
+            <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">();</span>
+            <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[RabbitMQ-Receiver] Received &#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>好了,第一个简单的例子完成了,你可以自己编译运行它看看效果,
+之所以说它简单是因为,很多默认值隐藏了一些概念,
+下面通过其他的例子来引出这些概念.</p>
+
+<h3>Multi-Producer &amp; Multi-Consumer</h3>
+
+<p>上面讲一个生产者一个消费者的时候提到有几个生产者其实无所谓,但是有几个
+消费者就需要关心了,它是如何给多个消费者分发消息的,如何才能公平的给所有
+消费者分发消息,再顺便解释下如何保证消息可靠地被消费者完全的消费了,
+如果RabbitMQ Server down了,重启后它的消息和队列是否还能保持呢.</p>
+
+<p>RabbitMQ默认的消息分发规则是轮询,RabbitMQ的消息支持acknowledgment,利用ack机制
+可以保证消息被消费者可靠地消费掉了.下面来一段Java代码示例,下面的代码是基于上
+面得代码修改的,我会结合代码在注释里进行解释.</p>
+
+<p><strong>Sender</strong></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQSend</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+        <span class="cm">/*</span>
+<span class="cm">           在上面的例子中durable这个参数给的默认值false.</span>
+<span class="cm">           如何设置为true,当RabbitMQ Server重启或者非正常退出了,</span>
+<span class="cm">           消息会被保存到磁盘(持久化),当然这样不能百分之百保证消息都保存到磁盘了,</span>
+<span class="cm">           如果对publish代码运用事务的话会增强guarantee.Send的durable参数为</span>
+<span class="cm">           true,receiver的durable也必须是true,且需要mark message,如下.</span>
+<span class="cm">           需要明确的是如果开启消息的持久化,一定会对性能产生一定的影响.</span>
+<span class="cm">         */</span>
+        <span class="kt">boolean</span> <span class="n">durable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;Hello World!&quot;</span><span class="o">;</span>
+
+        <span class="cm">/*</span>
+<span class="cm">           As queue declare to be durable,so we need to mark the message</span>
+<span class="cm">           as persistent by setting PERSISTENT_TEXT_PLAIN.</span>
+<span class="cm">         */</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="s">&quot;&quot;</span><span class="o">,</span> <span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="n">MessageProperties</span><span class="o">.</span><span class="na">PERSISTENT_TEXT_PLAIN</span><span class="o">,</span>
+                <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[RabbitMQ-Send] Send &#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+
+        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p><strong>Receiver</strong></p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RabbitMQRecv</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">String</span> <span class="n">QUEUE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="kd">static</span> <span class="kt">long</span> <span class="n">WAIT_FOR_NEXT_MESSAGE</span> <span class="o">=</span> <span class="mi">1L</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+        <span class="cm">/*</span>
+<span class="cm">           上面说过如果有多个消费者即worker,RabbitMQ将以轮询的方式</span>
+<span class="cm">           传递消息,有可能某一个消费者接收到的消息比较复杂,处理起来</span>
+<span class="cm">           比较慢,而其他的消费者接收到的消息处理起来都比较快,但是RabbitMQ</span>
+<span class="cm">           并不知道,那么这样得轮询就是不公平的,所以我们需要设置basicQos,</span>
+<span class="cm">           设置了basicQos,这样只有消费者ack了一个消息,RabbitMQ菜会继续传递</span>
+<span class="cm">           下一个消息给这个消费者,这样就公平了一点了,prefetchCount是消费者</span>
+<span class="cm">           缓存队列消息的数量,可以设置的大一点.</span>
+<span class="cm">           这种情况下如何所有的消费者都非常的忙碌,那么队列里面的消息很容易</span>
+<span class="cm">           暴增,所以需要做一个监控,在适当地时候用增加消费者或者其他办法解决</span>
+<span class="cm">           队列消息太多的问题.</span>
+<span class="cm">         */</span>
+        <span class="kt">int</span>  <span class="n">prefetchCount</span> <span class="o">=</span> <span class="mi">500</span><span class="o">;</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicQos</span><span class="o">(</span><span class="n">prefetchCount</span><span class="o">);</span>
+
+        <span class="kt">boolean</span> <span class="n">durable</span> <span class="o">=</span> <span class="kc">true</span><span class="o">;</span>
+        <span class="cm">/*</span>
+<span class="cm">           In Sender we have define the queue to be durable, so Receiver</span>
+<span class="cm">           must also define as durable.</span>
+<span class="cm">           So queue Declare code should be same with Sender.</span>
+<span class="cm">         */</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">false</span><span class="o">,</span> <span class="kc">null</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[*] Waiting for messages. To exit press CTRL+C&quot;</span><span class="o">);</span>
+
+        <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+        <span class="kt">boolean</span> <span class="n">autoAck</span> <span class="o">=</span> <span class="kc">false</span><span class="o">;</span>
+        <span class="cm">/*</span>
+<span class="cm">           之前的例子autoAck这个参数给的true,即RabbitMQ发送完一条消息后</span>
+<span class="cm">           会自动将它ack,即将它从内存移去,如果设置成false,就需要消费者</span>
+<span class="cm">           在消息处理完后通知RabbitMQ.</span>
+<span class="cm">         */</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">QUEUE_NAME</span><span class="o">,</span> <span class="n">autoAck</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
+
+        <span class="k">while</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+            <span class="cm">/*</span>
+<span class="cm">               上面提到consumer.nextDelivery()将会阻塞住,所以这里给一个</span>
+<span class="cm">               1ms默认timeout值,即当没有消息1ms后就返回null,在某些应用场景下是不希望</span>
+<span class="cm">               阻塞住的,设置一个比较小的timeout是比较可取的做法.</span>
+<span class="cm">             */</span>
+            <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">(</span><span class="n">WAIT_FOR_NEXT_MESSAGE</span><span class="o">);</span>
+            <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
+            <span class="cm">/*</span>
+<span class="cm">               如何autoAck设置的false,下面这个操作就非常重要了!</span>
+<span class="cm">               ack the message which have been received.</span>
+<span class="cm">             */</span>
+            <span class="n">channel</span><span class="o">.</span><span class="na">basicAck</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getEnvelope</span><span class="o">().</span><span class="na">getDeliveryTag</span><span class="o">(),</span> <span class="kc">false</span><span class="o">);</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot;[RabbitMQ-Receiver] Received &#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<h3>Pub-Sub &amp; Routing</h3>
+
+<p>下面会讲解Pub-Sub通信模式,在讲解Pub-Sub模式时会引入一个重要的概念:exchange,前面只所以没有提到那是
+因为用了默认的exchange,也就隐藏了这个概念.然后我会在Pub-Sub的基础上深入路由的概念.</p>
+
+<p>生产者发送的消息实际上并没有直接被传递到队列,而是被发送到了Exchange,Exchange会根据一些规则将消息路由
+到不同的队列,路由的规则是消费者连接Broker的时候Bind上去的,且路由规则可以分为<em>fanout</em> <em>direct</em>
+<em>topic</em> <em>headers</em> 几种类型.</p>
+
+<p><strong>fanout</strong></p>
+
+<p>这是最简单的exchange,fanout类型的exchange仅仅将接收到的消息广播到所有队列.下面看代码:</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Sender</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span><span class="o">{</span>
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+        <span class="c1">//声明fanout类型的exchange</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;fanout&quot;</span><span class="o">);</span>
+        <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;hello world&quot;</span><span class="o">;</span>
+        <span class="c1">//fanout类型的exchange会将接收到的消息发送给所有的队列,所以这里队列名参数给空就可以了.</span>
+        <span class="c1">//这时如果没有队列绑定上来,exchange接收到的消息将会直接丢掉.</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Recv</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;logs&quot;</span><span class="o">;</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+        <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+        <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+        <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;fanout&quot;</span><span class="o">);</span>
+        <span class="c1">//这里的队列名字是随机的,声明了一个非持久化的,独立消费的,自动删除的队列.</span>
+        <span class="n">String</span> <span class="n">queueName</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">().</span><span class="na">getQueue</span><span class="o">();</span>
+        <span class="c1">//这里是fanout类型的exchange,所以第三个参数bindKey可以忽略,直接为空就可以了</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">queueBind</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;&quot;</span><span class="o">);</span>
+        <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+        <span class="c1">//这里广播消息还是autoAck的好,广播消息有丢失正常,如果不想丢失可选用下面其他类型的exchange</span>
+        <span class="c1">//fanout类型的exchange灵活性不是很好,一般就用于广播消息.</span>
+        <span class="n">channel</span><span class="o">.</span><span class="na">basicConsumer</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
+        <span class="k">while</span><span class="o">(</span><span class="n">True</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">();</span>
+            <span class="n">String</span> <span class="n">msg</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
+            <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">msg</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p><strong>direct</strong></p>
+
+<p>这里提到的direct类型的exchange就需要用到binding key的参数了,队列在绑定到exchange
+的时候需要指定一个bindKey,这样exchange就知道如何分配源头过来的消息了.</p>
+
+<div class="highlight"><pre><code class="java"><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Send</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">argv</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+            <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+            <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+            <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+            <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+            <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">);</span>
+
+            <span class="n">String</span> <span class="n">routinKey</span> <span class="o">=</span> <span class="s">&quot;type1&quot;</span><span class="o">;</span>
+            <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="s">&quot;hello world&quot;</span><span class="o">;</span>
+
+            <span class="n">channel</span><span class="o">.</span><span class="na">basicPublish</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="n">routinKey</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">message</span><span class="o">.</span><span class="na">getBytes</span><span class="o">());</span>
+
+            <span class="n">channel</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+            <span class="n">connection</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Recv</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">EXCHANGE_NAME</span> <span class="o">=</span> <span class="s">&quot;test&quot;</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+           <span class="n">ConnectionFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ConnectionFactory</span><span class="o">();</span>
+           <span class="n">factory</span><span class="o">.</span><span class="na">setHost</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">);</span>
+           <span class="n">Connection</span> <span class="n">connection</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">newConnection</span><span class="o">();</span>
+           <span class="n">Channel</span> <span class="n">channel</span> <span class="o">=</span> <span class="n">connection</span><span class="o">.</span><span class="na">createChannel</span><span class="o">();</span>
+
+           <span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclarePassive</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">);</span>
+           <span class="n">String</span> <span class="n">queueName</span> <span class="o">=</span> <span class="n">channel</span><span class="o">.</span><span class="na">queueDeclare</span><span class="o">().</span><span class="na">getQueue</span><span class="o">();</span>
+
+           <span class="n">channel</span><span class="o">.</span><span class="na">queueBind</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;type1&quot;</span><span class="o">);</span>
+
+           <span class="n">QueueingConsumer</span> <span class="n">consumer</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QueueingConsumer</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+           <span class="n">channel</span><span class="o">.</span><span class="na">basicConsume</span><span class="o">(</span><span class="n">queueName</span><span class="o">,</span> <span class="kc">true</span><span class="o">,</span> <span class="n">consumer</span><span class="o">);</span>
+
+           <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">)</span> <span class="o">{</span>
+               <span class="n">QueueingConsumer</span><span class="o">.</span><span class="na">Delivery</span> <span class="n">delivery</span> <span class="o">=</span> <span class="n">consumer</span><span class="o">.</span><span class="na">nextDelivery</span><span class="o">();</span>
+               <span class="n">String</span> <span class="n">message</span> <span class="o">=</span> <span class="k">new</span> <span class="n">String</span><span class="o">(</span><span class="n">delivery</span><span class="o">.</span><span class="na">getBody</span><span class="o">());</span>
+               <span class="n">String</span> <span class="n">routingKey</span> <span class="o">=</span> <span class="n">delivery</span><span class="o">.</span><span class="na">getEnvelope</span><span class="o">().</span><span class="na">getRoutingKey</span><span class="o">();</span>
+
+               <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">&quot; [x] Received &#39;&quot;</span> <span class="o">+</span> <span class="n">routingKey</span> <span class="o">+</span> <span class="s">&quot;&#39;:&#39;&quot;</span> <span class="o">+</span> <span class="n">message</span> <span class="o">+</span> <span class="s">&quot;&#39;&quot;</span><span class="o">);</span>
+           <span class="o">}</span>
+   <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div>
+
+<p>上面Receiver的代码声明exchange的时候用到了<em>exchangeDeclarePassive(exchange, type)</em>,那么就顺便讲解下
+几个不同的exchange声明的区别.</p>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">);</span>
+</code></pre></div>
+
+<p>上面的代码是声明一个non-autodelete, non-durable且没有额外参数的exchange.</p>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">);</span>
+</code></pre></div>
+
+<p>这比上面的例子多了一个可以自定义的选择参数durable,是否持久化.</p>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span> <span class="n">Map</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Object</span><span class="o">&gt;</span> <span class="n">args</span><span class="o">);</span>
+</code></pre></div>
+
+<p>这又比上面的例子多了两个可控制的参数.</p>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclare</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">,</span> <span class="s">&quot;direct&quot;</span><span class="o">,</span> <span class="n">durable</span><span class="o">,</span> <span class="n">autoDelete</span><span class="o">,</span><span class="n">internal</span><span class="o">,</span> <span class="n">args</span><span class="o">);</span>
+</code></pre></div>
+
+<p>这里又多了一个参数internal,如果设置为true,那么这个exchange将不能直接pub消息到client.
+这是参数最全的一种情况,这里是完全由自己去设置exchange的参数.</p>
+
+<div class="highlight"><pre><code class="java"><span class="n">channel</span><span class="o">.</span><span class="na">exchangeDeclarePassive</span><span class="o">(</span><span class="n">EXCHANGE_NAME</span><span class="o">);</span>
+</code></pre></div>
+
+<p>这里会先检查EXCHANGE_NAME是否存在,不存在会报404:channel异常.</p>
+
+<p><strong>topics</strong></p>
+
+<p>topics类型的exchange提供了更大的灵活性,它的灵活性体现在routingKey上面,它的routinKey是
+由 <em>.</em> 隔开的word,像 <em>name.age.hobby</em> 这样,绑定的时候bindingKey可以是 <em>name.\</em>*  <em>name.age.hobby</em> 
+<em>name.#</em> 等, * 代表一个明确的word,#代表&gt;=0个word,这样在bind队列的时候灵活性就更大了.就不给示例代码了.</p>
+
+<h3>RPC</h3>
+
+<p>上面讲的通信模式可以运用在master-worker的场景下,比如Storm的数据源头用RabbitMQ,消息进入队列,Strom的
+spout共享一个队列共同消费这个队列的消息,利用RabbitMQ的ack机制可以确保Strom将队列的消息完整的处理了.</p>
+
+<p>这里的RPC即Remote procedure call可以运用在将没有线程概念且是串行执行的任务并行化执行(当然这样的任务
+是需要拿到执行的返回结果的),并行话执行就可以将时间花销从线性相加降低到并行执行最长的那个时间,这里暂时不做详细解释.</p>
+
+</div>
+
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+
+
+
+          
+
+    </body>
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-49477407-1', 'joinjoy.me');
+        ga('send', 'pageview');
+
+    </script>
+</html>
