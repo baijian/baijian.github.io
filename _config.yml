@@ -5,3 +5,8 @@ pygments: true
 encoding: utf-8
 
 exclude: ['bin', 'vendor', 'Gemfile', 'Gemfile.lock', '.ruby-version', 'README.md', 'script']
+
+google_analytics_tracking_id: UA-49477407-1
+google_analytics_tracking_url: joinjoy.me
+
+disqus_shortname: baijian

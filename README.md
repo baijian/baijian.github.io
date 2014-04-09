@@ -48,4 +48,3 @@ $ script/clean
 
 ### TODO List
 
-Turn `Google Analytics` and `Disqus` config to `_config.yml`
