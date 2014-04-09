@@ -35,11 +35,11 @@ dependencies of PHP projects. It is writen in php language completely.</p>
 <h3>Install and use it as a linux command</h3>
 
 <p>First of all, we should install composer, you can install it within your single project, but I like to install it globally.</p>
-<div class="highlight"><pre><code class="text language-text" data-lang="text">$ curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/bin
-</code></pre></div><div class="highlight"><pre><code class="text language-text" data-lang="text">$ mv $HOME/bin/composer.phar $HOME/bin/composer
+<div class="highlight"><pre><code class="text language-text" data-lang="text">$ curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/Bin
+</code></pre></div><div class="highlight"><pre><code class="text language-text" data-lang="text">$ mv $HOME/Bin/composer.phar $HOME/Bin/composer
 </code></pre></div>
-<p>As always I do, I like to place some frequently-used command tools in my $HOME/bin
-directory, ofcourse $HOME/bin is in my <code>PATH</code> variable.Then I can use it by just
+<p>As always I do, I like to place some frequently-used command tools in my $HOME/Bin
+directory, ofcourse $HOME/Bin is in my <code>PATH</code> variable.Then I can use it by just
 inputing <code>composer</code> command.</p>
 
 <h3>Init PHP web project using composer</h3>
@@ -114,16 +114,6 @@ file, then you can use the code in <code>src</code> folder to test your php libr
 <h3>Composer usage in detail</h3>
 
 <p>I will tell you some features of <code>composer</code> to help you use it better.</p>
-
-<ul>
-<li><p>Cache dist packages in your $HOME direcoty</p>
-
-<p>When you input <code>composer install</code> command, it help your install your project&#39;s
-dependency library in your ignore directory <code>vendor</code>, and if you input
-<code>composer install --prefer-dist</code>, it will automatically stores archive when download
-a dist package and when you use the same package in your other project, it will be
-network saving.</p></li>
-</ul>
 
 <h3>PHP learning resources</h3>
 
