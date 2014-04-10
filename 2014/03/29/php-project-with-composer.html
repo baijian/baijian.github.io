@@ -84,12 +84,12 @@ making directory <code>Baijian</code> and <code>Alogorithm</code>, it&#39;s cool
         <span class="nt">&quot;keywords&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;ahocorasick&quot;</span><span class="p">],</span>
         <span class="nt">&quot;license&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="nt">&quot;authors&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baijian&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;jian.baij@gmail.com&quot;</span><span class="p">,</span>
-            <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;Learner&quot;</span>
-        <span class="p">}</span>
-    <span class="p">],</span>
+            <span class="p">{</span>
+                <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;baijian&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;email&quot;</span><span class="p">:</span> <span class="s2">&quot;jian.baij@gmail.com&quot;</span><span class="p">,</span>
+                <span class="nt">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;Learner&quot;</span>
+            <span class="p">}</span>
+        <span class="p">],</span>
         <span class="nt">&quot;homepage&quot;</span><span class="p">:</span> <span class="s2">&quot;http://joinjoy.me&quot;</span><span class="p">,</span>
         <span class="nt">&quot;autoload&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;psr-4&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -101,6 +101,14 @@ making directory <code>Baijian</code> and <code>Alogorithm</code>, it&#39;s cool
         <span class="p">},</span>
         <span class="nt">&quot;require-dev&quot;</span><span class="p">:</span> <span class="p">{</span>
             <span class="nt">&quot;phpunit/phpunit&quot;</span><span class="p">:</span> <span class="s2">&quot;3.7.*&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;config&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;preferred-install&quot;</span><span class="p">:</span> <span class="s2">&quot;dist&quot;</span>
+        <span class="p">},</span>
+        <span class="nt">&quot;scripts&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;post-install-cmd&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;php index.php&quot;</span>  <span class="err">//</span> <span class="err">execute</span> <span class="err">after</span> <span class="err">composer</span> <span class="err">install</span>
+            <span class="p">]</span>
         <span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
@@ -126,6 +134,8 @@ And I will list some common commands.</p>
 <li><p><code>composer status -v</code> to see if you modify the code of your vendor direcotory, maybe sometimes you want to fix bug of one library, you can reserve it when <code>composer update</code></p></li>
 <li><p><code>composer dump-autoload --optimize</code> to optimize the autoload files before publish it.</p></li>
 </ul>
+
+<p>At last you&#39;d better know <code>scripts</code> config in <code>composer.json</code>, it can help you install some hooks(or callback) in some specific period.Such as <code>post-install-cmd</code> will be executed after you run <code>composer install</code>. All the period see <a href="https://getcomposer.org/doc/articles/scripts.md">here</a></p>
 
 <h3>PHP learning resources</h3>
 
