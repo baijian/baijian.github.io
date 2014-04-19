@@ -59,9 +59,22 @@ its efficiency is totally acceptable to us.</p>
 </code></pre></div>
 <p>After execute the command above, the first level of your project directory is as below:</p>
 <div class="highlight"><pre><code class="text language-text" data-lang="text">--app/
+  --config // all configs, Config::get(&#39;file.arrkey&#39;, &#39;default&#39;), different env with different sub-directory
+  --models
+  --views
+  --controllers
+  --start // some app startup init config, different env with env name php file
+  filters.php // App or Route filters
+  routes.php // Restfull router
+  ...
 --bootstrap/
+  autoload.php // select vendor/autoload.php as autoload mechanism
+  start.php // app startup script
+  path.php
 --public/
---vendor/
+  index.php // entrance script
+  ...
+--vendor/ // place all dependencies of your project
 artisan
 composer.json
 composer.lock
@@ -70,6 +83,8 @@ phpunit.xml
 readme.md
 server.php
 </code></pre></div>
+<p>run <code>php artison serve</code> to view website.</p>
+
 <h3>Use composer in common PHP library project</h3>
 
 <p>I want to write a php library, first I will need to init my project with a file
