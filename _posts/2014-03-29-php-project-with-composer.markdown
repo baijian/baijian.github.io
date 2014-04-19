@@ -18,15 +18,15 @@ dependencies of PHP projects. It is writen in php language completely.
 First of all, we should install composer, you can install it within your single project, but I like to install it globally.
 
 ```
-$ curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/bin
+$ curl -sS https://getcomposer.org/installer | php -- --install-dir=$HOME/Bin
 ```
 
 ```
-$ mv $HOME/bin/composer.phar $HOME/bin/composer
+$ mv $HOME/Bin/composer.phar $HOME/Bin/composer
 ```
 
-As always I do, I like to place some frequently-used command tools in my $HOME/bin
-directory, ofcourse $HOME/bin is in my `PATH` variable.Then I can use it by just
+As always I do, I like to place some frequently-used command tools in my $HOME/Bin
+directory, ofcourse $HOME/Bin is in my `PATH` variable.Then I can use it by just
 inputing `composer` command.
 
 ### Init PHP web project using composer
@@ -51,9 +51,22 @@ After execute the command above, the first level of your project directory is as
 
 ```
 --app/
+  --config // all configs, Config::get('file.arrkey', 'default'), different env with different sub-directory
+  --models
+  --views
+  --controllers
+  --start // some app startup init config, different env with env name php file
+  filters.php // App or Route filters
+  routes.php // Restfull router
+  ...
 --bootstrap/
+  autoload.php // select vendor/autoload.php as autoload mechanism
+  start.php // app startup script
+  path.php
 --public/
---vendor/
+  index.php // entrance script
+  ...
+--vendor/ // place all dependencies of your project
 artisan
 composer.json
 composer.lock
@@ -62,6 +75,8 @@ phpunit.xml
 readme.md
 server.php
 ```
+
+run `php artison serve` to view website.
 
 ### Use composer in common PHP library project
 
@@ -78,12 +93,12 @@ making directory `Baijian` and `Alogorithm`, it's cool~
         "keywords": ["ahocorasick"],
         "license": "",
         "authors": [
-        {
-            "name": "baijian",
-            "email": "jian.baij@gmail.com",
-            "role": "Learner"
-        }
-    ],
+            {
+                "name": "baijian",
+                "email": "jian.baij@gmail.com",
+                "role": "Learner"
+            }
+        ],
         "homepage": "http://joinjoy.me",
         "autoload": {
             "psr-4": {
@@ -95,6 +110,14 @@ making directory `Baijian` and `Alogorithm`, it's cool~
         },
         "require-dev": {
             "phpunit/phpunit": "3.7.*"
+        },
+        "config": {
+            "preferred-install": "dist"
+        },
+        "scripts": {
+            "post-install-cmd": [
+                "php index.php"  // execute after composer install
+            ]
         }
 }
 {% endhighlight %}
@@ -105,17 +128,28 @@ Then you created `src` folder and then write your code file in your `src` folder
 root directory of you project, you create a `index.php` file and require the `vendor/autoload.php`
 file, then you can use the code in `src` folder to test your php library.
 
-### Composer usage in detail
+### Composer usage in common
 
-I will tell you some features of `composer` to help you use it better.
+All the commands of `composer` are [here](https://getcomposer.org/doc/03-cli.md).
+And I will list some common commands.
 
-* Cache dist packages in your $HOME direcoty
+* `composer selfupdate` is to update composer.
 
-    When you input `composer install` command, it help your install your project's
-    dependency library in your ignore directory `vendor`, and if you input
-    `composer install --prefer-dist`, it will automatically stores archive when download
-    a dist package and when you use the same package in your other project, it will be
-    network saving.
+* `composer install --profile` the --profile is to see execute time of the execution.
+
+* `composer update foo/bar` to update specific vendor for you.
+
+* `composer update --lock` to update composer.lock file only.
+
+* `composer require "foo/bar:0.0.1"` to add a vendor.
+
+* `composer create-project vendor/project dir [version] --prefer-dist` to create a project, and setup from a dist package. Such as:`composer create-project laravel/laravel webdemo --prefer-dist` and dist packages are cached in $HOME/.composer directory automatically.
+
+* `composer status -v` to see if you modify the code of your vendor direcotory, maybe sometimes you want to fix bug of one library, you can reserve it when `composer update`
+
+* `composer dump-autoload --optimize` to optimize the autoload files before publish it.
+
+At last you'd better know `scripts` config in `composer.json`, it can help you install some hooks(or callback) in some specific period.Such as `post-install-cmd` will be executed after you run `composer install`. All the period see [here](https://getcomposer.org/doc/articles/scripts.md)
 
 ### PHP learning resources
 
