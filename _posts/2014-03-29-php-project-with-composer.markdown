@@ -47,6 +47,13 @@ its efficiency is totally acceptable to us.
 $ composer create-project laravel/laravel [ProjectName] --prefer-dist
 ```
 
+If the command above execute for a long time, maybe you have another choice.Download [Laravel-PHAR-archive](http://laravel.com/laravel.phar)
+and put it in your $HOME/Bin directory, then execute command below.
+
+```
+$ laravel new [ProjectName]
+```
+
 After execute the command above, the first level of your project directory is as below:
 
 ```
