@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>python-multithreading</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="site">
+          <div class="header">
+            <h1 class="title"><a href="/">Too young too simple and too naive</a></h1>
+            <a class="extra" href="/">home</a>
+            <a class="extra" href="/recomend.html">阿里内推</a>
+          </div>
+
+          <h2>python-multithreading</h2>
+<p class="meta">24 Feb 2015</p>
+
+<div class="post">
+<p>读完&lt;<Unix网络编程--进程间通信>&gt;以及实践了Python多线程编程后总结如下</p>
+
+<h2>进程和线程</h2>
+
+<p>定义及区别</p>
+
+<h2>应用场景</h2>
+
+<p>把占据长时间的程序中的人物放到后台去处理以加快程序运行速度</p>
+
+<p>等待的人物实现上比如用户输入,文件读写和网络收发数据等(IO密集型),线程比较有用,可以释放珍贵的内存占用资源</p>
+
+<p>独立的线程有一个程序运行的入口、书序执行序列和程序出口,线程不能独立执行,必须依存在应用程序中,由应用程序提供多个线程执行控制</p>
+
+<p>每个线程都有自己的一组CPU寄存器,称为线程上下文,上下文反应了线程上次运行该线程的CPU寄存器的状态</p>
+
+<h2>Python的多线程模块</h2>
+
+<p>thread 和 threading</p>
+
+<p>Queue模块提供了同步、线程安全的队列类</p>
+
+<h2>同步(线程间通信机制)</h2>
+
+<ul>
+<li>互斥锁</li>
+</ul>
+
+<p>多线程编程中防止两条线程同时对一公共资源进行读写,通过将代码切片成一个一个的临界区域(一块对公共资源进行存取的代码)达成</p>
+
+<ul>
+<li>条件变量</li>
+</ul>
+
+<p>利用线程间共享的全局变量来进行同步的机制,
+    一个线程等待<code>条件变量的条件成立</code>而挂起,另一个线程使<code>条件成立</code>(给出条件成立信号),防止竞争,条件变量和互斥锁结合在一起使用</p>
+
+<ul>
+<li><p>读写锁?(进程的)</p>
+
+<p>利用互斥锁和条件变量实现读写锁</p></li>
+<li><p>信号量(匿名)</p></li>
+</ul>
+
+<h3>Python的线程同步及线程同步队列</h3>
+
+<p>Python的GIL,如果逻辑只涉及一个底层指令,则是线程安全的,比如list的append操作是线程安全的,其他如<code>list[0]+=1</code>不是线程安全的</p>
+
+<p>GIL: 对于一个解释器,只能有一个thread在执行bytecode,所以每时每刻只有一条bytecode在执行,GIL保证了bytecode这层面上是thread safe的</p>
+
+<p><code>x += 1</code>这个操作是需要多个bytecode操作的,在执行这个操作的多个bytecode期间可能中途换thread</p>
+
+<p>GIL控制的是字节码,锁控制的是python代码,粒度不一样</p>
+
+<h3>IPC(进程间通信机制)</h3>
+
+<p>Unix以前比较多样,<code>IEEE</code>(电子电气工程学会)开发了一个独立的Unix标准,该标准(ANSI Unix)被称为计算机环境的可移植性操作系统界面(PSOIX),现在大部分Unix都遵循PSOIX标准,Linux一开始就遵循PSOIX标准</p>
+
+<p>Linux进程间通信的几个主要手段:</p>
+
+<ul>
+<li>Pipe和Named pipe</li>
+</ul>
+
+<p>管道用于亲缘关系进程间通信,有名管道允许无亲缘关系进程通信</p>
+
+<ul>
+<li><p>Signal(信号)</p></li>
+<li><p>消息队列</p></li>
+</ul>
+
+<p>克服信号承载信息量少,管道只能承载无格式字节流以及缓冲区大小受限</p>
+
+<ul>
+<li>共享内存</li>
+</ul>
+
+<p>最快的可用IPC形式,效率高,和信号量结合使用来达到进程间的同步与互斥</p>
+
+<ul>
+<li>信号量</li>
+</ul>
+
+<p>进程间以及同一进程内不同线程间的同步手段</p>
+
+<ul>
+<li>套接字(socket)</li>
+</ul>
+
+<p>可用于不通机器进程间的通信手段</p>
+
+</div>
+
+
+
+<section>
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'baijian'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</section>
+
+
+
+
+          
+
+    </body>
+    
+        <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-49477407-1', 'joinjoy.me');
+    ga('send', 'pageview');
+
+</script>
+
+    
+</html>
